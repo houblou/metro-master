@@ -1,0 +1,14 @@
+{
+  "bench_value": 100.8,
+  "reference_value": 100.0,
+  "bench_standard_uncertainty": 0.3,
+  "reference_standard_uncertainty": 0.2,
+  "correlation": 0.4,
+  "correlation_justification": "Illustrative shared upstream reference; not laboratory data.",
+  "bench_expanded_uncertainty": 0.6,
+  "reference_expanded_uncertainty": 0.4,
+  "expanded_correlation": 0.4,
+  "expanded_correlation_justification": "Same illustrative shared contribution and coverage convention."
+}
+
+

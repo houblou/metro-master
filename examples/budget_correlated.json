@@ -1,0 +1,32 @@
+{
+  "coverage_factor": 2.0,
+  "components": [
+    {
+      "name": "bench_result",
+      "standard_uncertainty": 3.0,
+      "sensitivity": 1.0,
+      "owner": "bench",
+      "unit": "kPa",
+      "distribution": "normal",
+      "source": "illustrative example only"
+    },
+    {
+      "name": "reference_result",
+      "standard_uncertainty": 4.0,
+      "sensitivity": -1.0,
+      "owner": "reference",
+      "unit": "kPa",
+      "distribution": "normal",
+      "source": "illustrative example only"
+    }
+  ],
+  "correlations": [
+    {
+      "left": "bench_result",
+      "right": "reference_result",
+      "coefficient": 0.5,
+      "justification": "Illustrative shared upstream reference; not laboratory data."
+    }
+  ]
+}
+

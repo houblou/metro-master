@@ -1,0 +1,7 @@
+{
+  "inputs": {
+    "x": {"value": 100.0, "unit": "kPa"},
+    "gain": {"value": 1.001, "unit": ""},
+    "offset": {"value": -0.05, "unit": "kPa"}
+  }
+}
