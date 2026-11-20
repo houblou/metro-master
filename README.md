@@ -26,7 +26,8 @@ Le projet ne contient le texte intégral d'aucune norme ISO ni d'aucun article p
 ## Installation et vérification
 
 ```powershell
-cd outputs\METRO-MASTER
+git clone https://github.com/houblou/metro-master.git
+cd metro-master
 py -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install -e .

@@ -21,6 +21,14 @@ from .reporting import REPORT_KINDS, render_study_report
 from .study_history import StudyStore
 
 
+def _configure_utf8_streams() -> None:
+    """Use UTF-8 for redirected CLI output while preserving interactive consoles."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if not stream.isatty() and callable(reconfigure):
+            reconfigure(encoding="utf-8")
+
+
 def _load_json(path: str) -> dict[str, Any]:
     with Path(path).open("r", encoding="utf-8") as handle:
         return json.load(handle)
@@ -189,6 +197,7 @@ def _parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    _configure_utf8_streams()
     args = _parser().parse_args(argv)
     engine = DeterministicEngine()
     try:

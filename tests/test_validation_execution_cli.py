@@ -4,7 +4,7 @@ import math
 import unittest
 from unittest import mock
 
-from metro_master.cli import main
+from metro_master.cli import _configure_utf8_streams, main
 from metro_master.comparison import compare_results, separate_bench_uncertainty
 from metro_master.execution import CalculationRequest, DeterministicEngine
 from metro_master.models import UncertaintyComponent
@@ -56,6 +56,18 @@ class ScientificValidationTests(unittest.TestCase):
 
 
 class ExecutionAndCliTests(unittest.TestCase):
+    def test_redirected_cli_streams_are_utf8(self):
+        stdout = mock.Mock()
+        stderr = mock.Mock()
+        stdout.isatty.return_value = False
+        stderr.isatty.return_value = False
+        with mock.patch("metro_master.cli.sys.stdout", stdout), mock.patch(
+            "metro_master.cli.sys.stderr", stderr
+        ):
+            _configure_utf8_streams()
+        stdout.reconfigure.assert_called_once_with(encoding="utf-8")
+        stderr.reconfigure.assert_called_once_with(encoding="utf-8")
+
     def test_calculation_request_constructor_enforces_identifier(self):
         with self.assertRaises(ValueError):
             CalculationRequest("", "budget", {"components": []})
