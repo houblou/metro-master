@@ -1,0 +1,5 @@
+interface:
+  display_name: "Expert en théorie de la mesure"
+  short_description: "Concepts, modèles et incertitudes de mesure"
+  default_prompt: "Utilisez $expert-theorie-mesure pour formaliser ce problème métrologique et contrôler son modèle de mesure et son raisonnement d'incertitude."
+

@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metro-master"
+version = "0.7.1"
+description = "Architecture multi-agents et moteur de calcul vérifiable pour la métrologie"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{name = "METRO-MASTER contributors"}]
+license = {file = "LICENSE"}
+dependencies = []
+
+[project.optional-dependencies]
+pdf = ["pypdf>=6,<7"]
+
+[project.scripts]
+metro-master = "metro_master.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+metro_master = [
+  "resources/prompts/*.md",
+  "resources/*.json",
+  "resources/library/*.json",
+]
+
+[tool.unittest]
+start-directory = "tests"
+

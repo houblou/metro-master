@@ -1,0 +1,8 @@
+{
+  "difference_standard_uncertainty": 3.605551275463989,
+  "reference_standard_uncertainty": 4.0,
+  "covariance": 6.0,
+  "identifiability_confirmed": true,
+  "identifiability_justification": "Illustrative inverse case generated from the same complete scalar model; not laboratory evidence."
+}
+

@@ -1,0 +1,6 @@
+interface:
+  display_name: "METRO-MASTER"
+  short_description: "Métrologie, statistiques et rapports auditables"
+  default_prompt: "Utilisez $metro-master pour cadrer cette étude métrologique, appliquer les analyses nécessaires et produire une conclusion traçable."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,35 @@
+{
+  "name": "metro-master",
+  "version": "0.7.1",
+  "description": "Orchestration métrologique en français, calculs déterministes, statistiques d'ingénierie et rapports auditables.",
+  "author": {
+    "name": "METRO-MASTER contributors",
+    "url": "https://github.com/houblou"
+  },
+  "homepage": "https://github.com/houblou/metro-master",
+  "repository": "https://github.com/houblou/metro-master",
+  "license": "Apache-2.0",
+  "keywords": [
+    "metrology",
+    "measurement-uncertainty",
+    "calibration",
+    "engineering-statistics",
+    "agent-skills"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "METRO-MASTER",
+    "shortDescription": "Métrologie, statistiques et rapports auditables",
+    "longDescription": "Pilote des études métrologiques en français, exécute les calculs avec le moteur déterministe, applique des méthodes statistiques d'ingénierie et produit des rapports traçables.",
+    "developerName": "METRO-MASTER contributors",
+    "category": "Education",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "websiteURL": "https://github.com/houblou/metro-master",
+    "defaultPrompt": [
+      "Cadre cette étude métrologique et sélectionne seulement les analyses nécessaires.",
+      "Analyse ces données de mesure, vérifie leur stabilité et construis un rapport traçable.",
+      "Reprends ce dossier métrologique existant à la dernière étape vérifiable."
+    ],
+    "brandColor": "#145A73"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "id": "linear-scale",
+  "version": "1.0.0",
+  "title": "Linear scale correction",
+  "description": "Illustrative affine transformation y = gain * x + offset.",
+  "kind": "formula",
+  "inputs": [
+    {
+      "name": "x",
+      "unit": "kPa",
+      "description": "Input indication.",
+      "minimum": 0.0,
+      "maximum": 1000.0
+    },
+    {
+      "name": "gain",
+      "unit": "",
+      "description": "Dimensionless scale factor.",
+      "minimum": 0.5,
+      "maximum": 1.5
+    },
+    {
+      "name": "offset",
+      "unit": "kPa",
+      "description": "Additive correction."
+    }
+  ],
+  "expression": "gain * x + offset",
+  "output": {
+    "name": "corrected_value",
+    "unit": "kPa",
+    "description": "Corrected pressure indication."
+  },
+  "references": [
+    {
+      "reference": "Illustrative internal method",
+      "content_status": "internal_validated_method",
+      "locator": "Example only",
+      "notes": "Not laboratory evidence; replace before operational use."
+    }
+  ],
+  "validation_cases": [
+    {
+      "name": "identity at zero",
+      "source": "Independent hand calculation for the illustrative example.",
+      "inputs": {
+        "x": {"value": 0.0, "unit": "kPa"},
+        "gain": {"value": 1.0, "unit": ""},
+        "offset": {"value": 0.0, "unit": "kPa"}
+      },
+      "expected_value": 0.0,
+      "expected_unit": "kPa",
+      "absolute_tolerance": 1e-12
+    },
+    {
+      "name": "gain and offset",
+      "source": "Independent hand calculation: 1.02 × 10 - 0.1 = 10.1 kPa.",
+      "inputs": {
+        "x": {"value": 10.0, "unit": "kPa"},
+        "gain": {"value": 1.02, "unit": ""},
+        "offset": {"value": -0.1, "unit": "kPa"}
+      },
+      "expected_value": 10.1,
+      "expected_unit": "kPa",
+      "absolute_tolerance": 1e-12
+    }
+  ]
+}

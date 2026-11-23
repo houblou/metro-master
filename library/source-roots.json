@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "cnam-metrologie-portable",
+      "label": "Bibliothèque Métrologie — cours CNAM",
+      "root_path": "library\\external\\cnam-metrologie",
+      "kind": "governed_reference_library",
+      "access_mode": "read_only",
+      "index_path": "00 - Index Metrologie.md",
+      "catalog_path": "00 - Catalogue\\catalogue.json",
+      "manifest_path": "00 - Catalogue\\manifest-pdf.csv",
+      "governance_path": "00 - Catalogue\\droits-et-gouvernance.md",
+      "agent_guide_path": "00 - Catalogue\\guide-agent.md",
+      "comparison_method_path": "00 - Catalogue\\methodologie-comparaison.md",
+      "catalog_records": 69,
+      "catalog_priorities": {
+        "P0": 19,
+        "P1": 27,
+        "P2": 21,
+        "P3": 2
+      },
+      "local_pdf_count": 0,
+      "manifest_sha256_matches": 0,
+      "manifest_sha256_mismatches": 0,
+      "onedrive_offline_file_count": 0,
+      "content_state": "metadata_only",
+      "registered_at": "2026-11-20",
+      "rules": [
+        "The external catalogue is authoritative for version and priority within this source root.",
+        "A local PDF is not considered analysed until relevant pages have been extracted and cited.",
+        "Do not redistribute full texts outside the licence perimeter.",
+        "Select the smallest task-specific document packet before extraction.",
+        "Human validation is required before declaring a document applicable."
+      ]
+    }
+  ]
+}
+

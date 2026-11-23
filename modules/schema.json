@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/metro-master/formula-module.schema.json",
+  "title": "METRO-MASTER declarative formula module",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "version",
+    "title",
+    "description",
+    "kind",
+    "inputs",
+    "expression",
+    "output",
+    "references",
+    "validation_cases"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{1,63}$"},
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[a-z0-9.-]+)?$"
+    },
+    "title": {"type": "string", "minLength": 1},
+    "description": {"type": "string", "minLength": 1},
+    "kind": {"const": "formula"},
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "unit", "description"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$"},
+          "unit": {"type": "string"},
+          "description": {"type": "string", "minLength": 1},
+          "minimum": {"type": "number"},
+          "maximum": {"type": "number"}
+        }
+      }
+    },
+    "expression": {"type": "string", "minLength": 1, "maxLength": 2000},
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "unit", "description"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "unit": {"type": "string"},
+        "description": {"type": "string", "minLength": 1}
+      }
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["reference", "content_status", "locator"],
+        "properties": {
+          "reference": {"type": "string", "minLength": 1},
+          "content_status": {
+            "enum": [
+              "metadata_only",
+              "excerpt_provided",
+              "full_text_provided",
+              "internal_validated_method"
+            ]
+          },
+          "locator": {"type": "string"},
+          "notes": {"type": "string"}
+        }
+      }
+    },
+    "validation_cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "source",
+          "inputs",
+          "expected_value",
+          "expected_unit",
+          "absolute_tolerance"
+        ],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "minLength": 1},
+          "inputs": {"type": "object"},
+          "expected_value": {"type": "number"},
+          "expected_unit": {"type": "string"},
+          "absolute_tolerance": {"type": "number", "minimum": 0}
+        }
+      }
+    }
+  }
+}

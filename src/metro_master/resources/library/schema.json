@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "METRO-MASTER document catalog",
+  "type": "object",
+  "required": ["catalog_version", "verified_at", "documents"],
+  "properties": {
+    "catalog_version": {"type": "string"},
+    "verified_at": {"type": "string", "format": "date"},
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id", "reference", "title", "publisher", "family", "edition",
+          "publication_date", "status", "official_url", "topics", "agents",
+          "content_status", "verified_at", "local_path", "sha256", "notes"
+        ],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "reference": {"type": "string"},
+          "title": {"type": "string"},
+          "publisher": {"type": "string"},
+          "family": {"type": "string"},
+          "edition": {"type": "string"},
+          "publication_date": {"type": "string"},
+          "status": {"type": "string"},
+          "official_url": {"type": "string", "format": "uri"},
+          "topics": {"type": "array", "items": {"type": "string"}},
+          "agents": {"type": "array", "items": {"type": "string"}},
+          "content_status": {
+            "enum": ["metadata_only", "excerpt_provided", "full_text_provided"]
+          },
+          "verified_at": {"type": "string", "format": "date"},
+          "local_path": {"type": ["string", "null"]},
+          "sha256": {"type": ["string", "null"]},
+          "notes": {"type": "string"}
+        }
+      }
+    }
+  }
+}
+

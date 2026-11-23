@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.coverage
+build/
+dist/
+.env
+.env.*
+
+# Registres et exports locaux générés pendant les études.
+knowledge/registry/
+modules/registry/
+studies/registry/
+exports/
+
+# Les textes bibliographiques intégraux restent dans leur périmètre de licence.
+library/documents/*
+!library/documents/README.md
+library/external/cnam-metrologie/**/*.pdf
+
