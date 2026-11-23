@@ -4,6 +4,8 @@ MetrologyLab AI est un projet hybride ChatGPT + Python, distribué sous licence 
 
 Depuis la version 0.9.0, le nom public est cohérent de bout en bout : projet et skill **MetrologyLab AI**, paquet importable `metrology_lab_ai` et commande `metrology-lab-ai`. La distribution, le module et la commande historiques `metro-master` / `metro_master`, ainsi que le rôle interne `METRO-MASTER`, restent disponibles afin de ne pas casser les intégrations existantes.
 
+Pendant la maturation, chaque livraison incrémente seulement le correctif : `0.9.0`, `0.9.1`, `0.9.2`, etc. La version `1.0.0` ne sera pas déduite automatiquement de la quantité de changements : elle sera décidée explicitement lorsque le niveau de maturité attendu sera atteint.
+
 Le projet ne contient le texte intégral d'aucune norme ISO ni d'aucun article payant. Le catalogue documentaire fourni est un index de métadonnées et de liens officiels vérifiés le 5 novembre 2026. Un agent ne peut citer une exigence ou un numéro de clause que si le texte ou l'extrait correspondant lui a effectivement été fourni.
 
 ## Ce qui est livré
@@ -13,7 +15,7 @@ Le projet ne contient le texte intégral d'aucune norme ISO ni d'aucun article p
 - un contrat scientifique commun et des instructions spécialisées composables en prompts complets ;
 - un prompt maître Markdown directement modifiable et trois profils de budget de tokens ;
 - un catalogue documentaire structuré JCGM/BIPM, ISO, ILAC, EA et EURAMET ;
-- propagation linéaire avec matrice de corrélation, contributions de covariance, incertitude élargie et Welch–Satterthwaite lorsque les composantes à degrés de liberté finis restent indépendantes ;
+- propagation linéaire avec unités de sensibilité typées, conversions dimensionnelles, matrice de corrélation, contributions de covariance, incertitude élargie et Welch–Satterthwaite lorsque les composantes à degrés de liberté finis restent indépendantes ;
 - calcul d'écart corrélé, score zêta, erreur normalisée, statistiques de paires et séparation conditionnelle de la variance du banc ;
 - un orchestrateur Python indépendant du fournisseur de modèle ;
 - un contrat `ResearchProvider` pour mener jusqu'à trois passes Web, filtrer les domaines et privilégier les sources officielles/primaires ;
@@ -40,7 +42,11 @@ python -m unittest discover -s tests -t . -v
 
 Depuis un checkout, les tests peuvent aussi être lancés sans installation ni `PYTHONPATH` avec `python -m unittest discover -s tests -t . -v`.
 
-Le projet n'a aucune dépendance d'exécution externe. Python 3.11 ou plus récent suffit.
+Le noyau n'a aucune dépendance d'exécution externe. Python 3.11 ou plus récent suffit. Un adaptateur Pint est disponible en option pour les intégrations qui ont besoin d'un registre d'unités plus large :
+
+```powershell
+python -m pip install -e ".[units]"
+```
 
 L'extraction de PDF est optionnelle et utilise `pypdf` :
 

@@ -7,7 +7,11 @@ from math import inf, isclose, sqrt
 from typing import Iterable
 
 from .models import Correlation, UncertaintyComponent
-from .quantities import convert_standard_uncertainty
+from .quantities import (
+    contribution_unit,
+    convert_between_specs,
+    parse_unit,
+)
 from .validation import require_positive, validate_compatible_units
 
 
@@ -32,6 +36,7 @@ class BudgetResult:
     diagonal_variance_by_owner: dict[str, float]
     warnings: tuple[str, ...]
     effective_degrees_of_freedom_method: str
+    unit: str
 
     def to_dict(self) -> dict[str, object]:
         data = asdict(self)
@@ -116,6 +121,7 @@ def propagate_linear(
     correlations: Iterable[Correlation] = (),
     *,
     coverage_factor: float = 2.0,
+    output_unit: str | None = None,
 ) -> BudgetResult:
     """Apply ``u²(y) = cᵀ U c`` to a first-order measurement model.
 
@@ -131,19 +137,32 @@ def propagate_linear(
     if not components:
         raise ValueError("at least one uncertainty component is required")
     require_positive("coverage_factor", coverage_factor)
-    common_unit = validate_compatible_units(components)
-    components = [
-        replace(
-            component,
-            standard_uncertainty=convert_standard_uncertainty(
-                component.standard_uncertainty,
-                component.unit,
-                common_unit,
-            ),
-            unit=common_unit,
+    if output_unit is None:
+        output_unit = validate_compatible_units(components)
+    else:
+        parse_unit(output_unit)
+    output_specification = parse_unit(output_unit)
+    normalized_components = []
+    for component in components:
+        specification = contribution_unit(
+            component.unit,
+            component.sensitivity_unit,
         )
-        for component in components
-    ]
+        contribution = convert_between_specs(
+            component.sensitivity * component.standard_uncertainty,
+            specification,
+            output_specification,
+        )
+        normalized_components.append(
+            replace(
+                component,
+                standard_uncertainty=abs(contribution),
+                sensitivity=-1.0 if contribution < 0 else 1.0,
+                unit=output_unit,
+                sensitivity_unit="1",
+            )
+        )
+    components = normalized_components
     matrix = build_correlation_matrix(components, correlations)
 
     terms: list[VarianceTerm] = []
@@ -229,5 +248,6 @@ def propagate_linear(
         diagonal_variance_by_owner=by_owner,
         warnings=tuple(warnings),
         effective_degrees_of_freedom_method=effective_dof_method,
+        unit=output_unit,
     )
 

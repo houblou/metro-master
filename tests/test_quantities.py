@@ -1,8 +1,11 @@
 import math
 import unittest
+from unittest.mock import patch
 
 from metro_master.models import UncertaintyComponent
 from metro_master.quantities import (
+    DependencyUnavailable,
+    PintQuantityAdapter,
     compatible_units,
     convert_standard_uncertainty,
     convert_value,
@@ -49,6 +52,67 @@ class QuantityTests(unittest.TestCase):
             all_kpa.combined_standard_uncertainty,
         )
         self.assertAlmostEqual(in_kpa.combined_standard_uncertainty, math.sqrt(1.25))
+
+    def test_typed_sensitivity_converts_contributions_to_output_unit(self):
+        result = propagate_linear(
+            [
+                UncertaintyComponent(
+                    "temperature effect",
+                    2.0,
+                    sensitivity=3.0,
+                    unit="°C",
+                    sensitivity_unit="kPa/K",
+                ),
+                UncertaintyComponent(
+                    "pressure effect",
+                    500.0,
+                    unit="Pa",
+                    sensitivity_unit="1",
+                ),
+            ],
+            output_unit="kPa",
+        )
+        self.assertEqual(result.unit, "kPa")
+        self.assertAlmostEqual(
+            result.combined_standard_uncertainty,
+            math.sqrt(6.0**2 + 0.5**2),
+        )
+
+    def test_typed_sensitivity_rejects_incoherent_output_unit(self):
+        with self.assertRaisesRegex(ValueError, "incompatible contribution units"):
+            propagate_linear(
+                [
+                    UncertaintyComponent(
+                        "temperature effect",
+                        2.0,
+                        unit="K",
+                        sensitivity_unit="kPa/K",
+                    )
+                ],
+                output_unit="mm",
+            )
+
+    def test_contribution_overflow_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "contribution must be finite"):
+            propagate_linear(
+                [
+                    UncertaintyComponent(
+                        "overflow",
+                        1e308,
+                        sensitivity=2.0,
+                        unit="kPa",
+                    )
+                ],
+                output_unit="kPa",
+            )
+
+    def test_pint_adapter_is_explicitly_optional(self):
+        with patch(
+            "metro_master.quantities.importlib.import_module",
+            side_effect=ImportError("not installed"),
+        ):
+            with self.assertRaisesRegex(DependencyUnavailable, "units.*extra"):
+                PintQuantityAdapter()
 
 
 if __name__ == "__main__":

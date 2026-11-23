@@ -29,6 +29,7 @@ Les seules références de preuve admises sont `user_request`, `knowledge:<id>` 
             "name": "repeatability",
             "standard_uncertainty": 0.3,
             "sensitivity": 1.0,
+            "sensitivity_unit": "1",
             "owner": "bench",
             "unit": "kPa",
             "distribution": "unspecified",
@@ -37,7 +38,8 @@ Les seules références de preuve admises sont `user_request`, `knowledge:<id>` 
           }
         ],
         "correlations": [],
-        "coverage_factor": 2.0
+        "coverage_factor": 2.0,
+        "output_unit": "kPa"
       },
       "evidence": [
         {
@@ -53,6 +55,12 @@ Les seules références de preuve admises sont `user_request`, `knowledge:<id>` 
           "evidence_type": "method_choice"
         },
         {
+          "field_path": "/components/0/sensitivity_unit",
+          "source_ref": "declared:method",
+          "excerpt": "unité du coefficient de sensibilité 1 déclarée",
+          "evidence_type": "method_choice"
+        },
+        {
           "field_path": "/components/0/unit",
           "source_ref": "user_request",
           "excerpt": "incertitude-type de répétabilité 0,3 kPa",
@@ -63,6 +71,12 @@ Les seules références de preuve admises sont `user_request`, `knowledge:<id>` 
           "source_ref": "declared:method",
           "excerpt": "facteur de couverture k=2 retenu sous réserve de justification",
           "evidence_type": "method_choice"
+        },
+        {
+          "field_path": "/output_unit",
+          "source_ref": "user_request",
+          "excerpt": "incertitude-type de répétabilité 0,3 kPa",
+          "evidence_type": "provided"
         }
       ],
       "assumptions": [
@@ -75,4 +89,4 @@ Les seules références de preuve admises sont `user_request`, `knowledge:<id>` 
 }
 ```
 
-Les index des listes commencent à zéro. Les nombres, booléens et unités exigent une preuve. Pour `budget`, rendez explicitement `sensitivity`, `owner`, `unit`, `distribution`, `source`, `degrees_of_freedom`, `correlations` et `coverage_factor` afin qu'aucun défaut Python ne devienne une hypothèse cachée. Une liste de corrélations vide exige une hypothèse écrite. Les champs textuels doivent eux aussi être visibles dans le payload et justifiés dans le message. En cas de doute, rendez une analyse textuelle avec la liste précise des informations manquantes et aucune `calculation_requests`.
+Les index des listes commencent à zéro. Les nombres, booléens et unités exigent une preuve. Pour `budget`, rendez explicitement `sensitivity`, `sensitivity_unit`, `owner`, `unit`, `distribution`, `source`, `degrees_of_freedom`, `correlations`, `coverage_factor` et `output_unit` afin qu'aucun défaut Python ne devienne une hypothèse cachée. Vérifiez que `unit × sensitivity_unit` est compatible avec `output_unit`. Une liste de corrélations vide exige une hypothèse écrite. Les champs textuels doivent eux aussi être visibles dans le payload et justifiés dans le message. En cas de doute, rendez une analyse textuelle avec la liste précise des informations manquantes et aucune `calculation_requests`.

@@ -59,6 +59,7 @@ class CompilerAndAuditBackend:
                                         "name": "u1",
                                         "standard_uncertainty": 3.0,
                                         "sensitivity": 1.0,
+                                        "sensitivity_unit": "1",
                                         "owner": "bench",
                                         "unit": "kPa",
                                         "distribution": "unspecified",
@@ -69,6 +70,7 @@ class CompilerAndAuditBackend:
                                         "name": "u2",
                                         "standard_uncertainty": 4.0,
                                         "sensitivity": 1.0,
+                                        "sensitivity_unit": "1",
                                         "owner": "bench",
                                         "unit": "kPa",
                                         "distribution": "unspecified",
@@ -78,6 +80,7 @@ class CompilerAndAuditBackend:
                                 ],
                                 "correlations": [],
                                 "coverage_factor": 2.0,
+                                "output_unit": "kPa",
                             },
                             "evidence": [
                                 {
@@ -105,6 +108,18 @@ class CompilerAndAuditBackend:
                                     "evidence_type": "method_choice",
                                 },
                                 {
+                                    "field_path": "/components/0/sensitivity_unit",
+                                    "source_ref": "declared:method",
+                                    "excerpt": "dimensionless sensitivity unit 1",
+                                    "evidence_type": "method_choice",
+                                },
+                                {
+                                    "field_path": "/components/1/sensitivity_unit",
+                                    "source_ref": "declared:method",
+                                    "excerpt": "dimensionless sensitivity unit 1",
+                                    "evidence_type": "method_choice",
+                                },
+                                {
                                     "field_path": "/components/0/unit",
                                     "source_ref": "user_request",
                                     "excerpt": "u1 = 3.0 kPa",
@@ -121,6 +136,12 @@ class CompilerAndAuditBackend:
                                     "source_ref": "declared:method",
                                     "excerpt": "coverage factor 2.0",
                                     "evidence_type": "method_choice",
+                                },
+                                {
+                                    "field_path": "/output_unit",
+                                    "source_ref": "user_request",
+                                    "excerpt": "u1 = 3.0 kPa",
+                                    "evidence_type": "provided",
                                 },
                             ],
                             "assumptions": [
@@ -210,6 +231,7 @@ class RagCompilerHistoryReportingTests(unittest.TestCase):
                         "name": "u1",
                         "standard_uncertainty": 3.0,
                         "sensitivity": 1.0,
+                        "sensitivity_unit": "1",
                         "owner": "bench",
                         "unit": "kPa",
                         "distribution": "unspecified",
@@ -220,6 +242,7 @@ class RagCompilerHistoryReportingTests(unittest.TestCase):
                         "name": "u2",
                         "standard_uncertainty": 4.0,
                         "sensitivity": 1.0,
+                        "sensitivity_unit": "1",
                         "owner": "bench",
                         "unit": "kPa",
                         "distribution": "unspecified",
@@ -229,6 +252,7 @@ class RagCompilerHistoryReportingTests(unittest.TestCase):
                 ],
                 "correlations": [],
                 "coverage_factor": 2.0,
+                "output_unit": "kPa",
             },
             evidence=(
                 InputEvidence(
@@ -256,6 +280,18 @@ class RagCompilerHistoryReportingTests(unittest.TestCase):
                     "method_choice",
                 ),
                 InputEvidence(
+                    "/components/0/sensitivity_unit",
+                    "declared:method",
+                    "dimensionless sensitivity unit 1",
+                    "method_choice",
+                ),
+                InputEvidence(
+                    "/components/1/sensitivity_unit",
+                    "declared:method",
+                    "dimensionless sensitivity unit 1",
+                    "method_choice",
+                ),
+                InputEvidence(
                     "/components/0/unit",
                     "user_request",
                     "u1 = 3.0 kPa",
@@ -272,6 +308,12 @@ class RagCompilerHistoryReportingTests(unittest.TestCase):
                     "declared:method",
                     "coverage factor 2.0",
                     "method_choice",
+                ),
+                InputEvidence(
+                    "/output_unit",
+                    "user_request",
+                    "u1 = 3.0 kPa",
+                    "provided",
                 ),
             ),
             assumptions=(
@@ -323,6 +365,7 @@ class RagCompilerHistoryReportingTests(unittest.TestCase):
                         "name": "u1",
                         "standard_uncertainty": 3.0,
                         "sensitivity": 1.0,
+                        "sensitivity_unit": "1",
                         "owner": "bench",
                         "unit": "kPa",
                         "distribution": "unspecified",
@@ -332,6 +375,7 @@ class RagCompilerHistoryReportingTests(unittest.TestCase):
                 ],
                 "correlations": [],
                 "coverage_factor": 2.0,
+                "output_unit": "kPa",
             },
             evidence=(
                 InputEvidence(
@@ -347,6 +391,12 @@ class RagCompilerHistoryReportingTests(unittest.TestCase):
                     "method_choice",
                 ),
                 InputEvidence(
+                    "/components/0/sensitivity_unit",
+                    "declared:method",
+                    "dimensionless sensitivity unit 1",
+                    "method_choice",
+                ),
+                InputEvidence(
                     "/components/0/unit",
                     "user_request",
                     "u1 = 30.0 kPa",
@@ -357,6 +407,12 @@ class RagCompilerHistoryReportingTests(unittest.TestCase):
                     "declared:method",
                     "coverage factor 2.0",
                     "method_choice",
+                ),
+                InputEvidence(
+                    "/output_unit",
+                    "user_request",
+                    "u1 = 30.0 kPa",
+                    "provided",
                 ),
             ),
             assumptions=(

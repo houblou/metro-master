@@ -12,6 +12,7 @@ from metro_master.module_registry import (
     FormulaCalculationModule,
     FormulaModuleDefinition,
     ModuleStore,
+    parse_unit_expression,
 )
 
 
@@ -36,6 +37,13 @@ class ModuleRegistryTests(unittest.TestCase):
         self.assertAlmostEqual(result["output"]["value"], 100.05)
         self.assertEqual(result["output"]["unit"], "kPa")
         self.assertEqual(result["definition_sha256"], definition.integrity_sha256())
+
+    def test_formula_registry_uses_the_core_dimensional_algebra(self):
+        self.assertEqual(parse_unit_expression("kPa"), parse_unit_expression("Pa"))
+        self.assertEqual(
+            parse_unit_expression("kPa/K"),
+            {"L": -1, "M": 1, "T": -2, "Theta": -1},
+        )
 
     def test_formula_rejects_python_and_attribute_access(self):
         for expression in (

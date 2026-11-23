@@ -27,7 +27,13 @@ from .research import (
     ResearchRequest,
     ResearchSource,
 )
-from .quantities import compatible_units, convert_standard_uncertainty, convert_value
+from .quantities import (
+    DependencyUnavailable,
+    PintQuantityAdapter,
+    compatible_units,
+    convert_standard_uncertainty,
+    convert_value,
+)
 from .rag import (
     CallableEmbeddingProvider,
     HashingEmbeddingProvider,
@@ -48,6 +54,7 @@ __all__ = [
     "ConclusionClaim",
     "ConclusionVerificationReport",
     "DeterministicEngine",
+    "DependencyUnavailable",
     "IdentifiabilityError",
     "GovernedPdfLibrary",
     "KnowledgeStore",
@@ -55,6 +62,7 @@ __all__ = [
     "ModuleRegistry",
     "ModuleStore",
     "PdfPageChunk",
+    "PintQuantityAdapter",
     "CallableResearchProvider",
     "ResearchRequest",
     "ResearchSource",

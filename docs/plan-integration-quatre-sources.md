@@ -1,9 +1,10 @@
 # Plan complet d'intégration des quatre sources scientifiques
 
-- **Statut :** en cours — lots 0 et 1 livrés dans la version 0.9.0
+- **Statut :** en cours — lots 0 à 2 livrés jusqu'à la version 0.9.1
 - **Date de référence :** 2026-11-23
 - **Point de départ :** MetrologyLab AI 0.8.0, 86 tests réussis
-- **État d'exécution :** MetrologyLab AI 0.9.0, 98 tests réussis, lot actif : grandeurs et unités
+- **État d'exécution :** MetrologyLab AI 0.9.1, 103 tests réussis, prochain lot : Monte-Carlo JCGM 101
+- **Politique de version :** chaque livraison de maturation incrémente seulement le correctif ; `1.0.0` nécessite une décision explicite du mainteneur
 - **Décision d'architecture :** [ADR-0007](adr/0007-integration-scientifique-gouvernee-et-traces.md)
 - **Objectif final :** intégrer les apports utiles des quatre dépôts sans perdre la séparation LLM/calcul, la compatibilité, les licences, la reproductibilité ni la traçabilité.
 
@@ -349,18 +350,18 @@ Une étude `INCOMPLET` ou `NON VALIDE` est tout de même sauvegardée.
 
 **Sortie :** les quatre opérations existantes deviennent totalement traçables avant toute extension.
 
-### Lot 2 — Grandeurs et unités (0.10.0)
+### Lot 2 — Grandeurs et unités (0.9.1)
 
-- [ ] réunir l'algèbre dimensionnelle du registre et les unités des budgets — conversions de budget livrées, registre déclaratif restant à migrer ;
-- [ ] définir un adaptateur interne minimal et un adaptateur Pint optionnel — adaptateur minimal livré, adaptateur optionnel restant ;
+- [x] réunir l'algèbre dimensionnelle du registre et les unités des budgets ;
+- [x] définir un adaptateur interne minimal et un adaptateur Pint optionnel ;
 - [x] gérer conversions multiplicatives, unités dérivées et températures avec décalage ;
-- [ ] typer les coefficients de sensibilité ;
+- [x] typer les coefficients de sensibilité ;
 - [x] refuser unités inconnues, ambiguës, logarithmiques ou contextuelles non configurées ;
 - [x] vérifier l'invariance des résultats sous conversion cohérente.
 
 **Sortie :** plus de comparaison naïve de chaînes d'unités dans le budget.
 
-### Lot 3 — Monte-Carlo JCGM 101 (0.11.0)
+### Lot 3 — Monte-Carlo JCGM 101 (0.9.2)
 
 - [ ] ajouter distributions prises en charge avec paramètres explicites ;
 - [ ] échantillonner les corrélations via une méthode numérique validée ;
@@ -372,7 +373,7 @@ Une étude `INCOMPLET` ou `NON VALIDE` est tout de même sauvegardée.
 
 **Sortie :** modèles non linéaires ou non gaussiens calculés et reproductibles.
 
-### Lot 4 — Statistiques d'ingénierie (0.12.0 à 0.14.0)
+### Lot 4 — Statistiques d'ingénierie (0.9.3 à 0.9.5)
 
 Ordre d'activation :
 
@@ -386,7 +387,7 @@ Ordre d'activation :
 
 Chaque module possède son contrat de plan. Par exemple, `gauge-rr-crossed` refuse l'absence de pièces, opérateurs, répétitions ou identifiabilité ; `process-capability` refuse un procédé déclaré instable ou sans limites de spécification.
 
-### Lot 5 — Expertise par grandeur (0.15.0)
+### Lot 5 — Expertise par grandeur (0.9.6)
 
 - [ ] créer des références françaises courtes par grandeur ;
 - [ ] router seulement les références nécessaires ;
@@ -396,7 +397,7 @@ Chaque module possède son contrat de plan. Par exemple, `gauge-rr-crossed` refu
 
 **Sortie :** couverture métier plus large sans treize prompts chargés simultanément.
 
-### Lot 6 — CMM, GD&T et surface (0.16.0)
+### Lot 6 — CMM, GD&T et surface (0.9.7)
 
 - [ ] ajouter le cadrage CMM, repères, palpage, thermique et stratégie de mesure ;
 - [ ] réutiliser les calculateurs transversaux de R&R et d'unités ;
@@ -406,7 +407,7 @@ Chaque module possède son contrat de plan. Par exemple, `gauge-rr-crossed` refu
 
 **Sortie :** assistance dimensionnelle industrielle, limitée par les textes réellement accessibles.
 
-### Lot 7 — Durcissement et version 1.0
+### Lot 7 — Durcissement de maturité (sans passage automatique à 1.0)
 
 - [ ] benchmarks gold publics ;
 - [ ] couverture et mutation ;
@@ -579,7 +580,7 @@ Lot 3 Monte-Carlo   Lot 4 Statistiques
        Lot 6 CMM/GD&T/surface
                │
                ▼
-         Lot 7 Durcissement 1.0
+       Lot 7 Durcissement de maturité
 ```
 
 Commencer par les statistiques ou Monte-Carlo avant les lots 0 à 2 créerait des résultats impossibles à tracer correctement et multiplierait les modèles d'unités.
@@ -597,8 +598,8 @@ Le programme est terminé lorsque :
 - les rapports exposent module, version, hypothèses, sources, environnement, empreintes et limites ;
 - la matrice CI et les benchmarks gold passent ;
 - le responsable métrologique approuve le domaine d'emploi ;
-- la release 1.0 peut être reconstruite depuis un checkout propre et son SBOM.
+- une future release 1.0, décidée explicitement, peut être reconstruite depuis un checkout propre et son SBOM.
 
 ## 15. Action en cours
 
-Les lots 0 et 1 sont livrés dans la version 0.9.0 : registre de sources, notices, descripteurs natifs, trace canonique, autorité de `MODEL-COMPILER`, porte de complétude, alias publics et tests sans installation. Le **lot 2 — grandeurs et unités** devient le prochain lot actif ; Monte-Carlo et statistiques restent bloqués tant que ce socle dimensionnel commun n'est pas terminé.
+Les lots 0 et 1 sont livrés dans la version 0.9.0. Le lot 2 est livré dans la version 0.9.1 : algèbre dimensionnelle commune, conversions de contributions, coefficients de sensibilité typés, unité de sortie obligatoire pour les calculs compilés et adaptateur Pint optionnel. Le **lot 3 — Monte-Carlo JCGM 101** devient le prochain lot actif en `0.9.2` ; les statistiques avancées restent bloquées tant que ce calcul reproductible n'est pas terminé.

@@ -13,6 +13,7 @@ from pathlib import Path
 import re
 from typing import Any, Callable, Iterable, Mapping, Protocol
 
+from .quantities import parse_unit
 from .validation import require_finite, require_text
 
 
@@ -23,44 +24,11 @@ VALID_STATUSES = {"candidate", "validated", "deprecated"}
 CORE_RESERVED_MODULE_IDS = frozenset({"budget", "compare", "paired", "separate"})
 MAX_EXPRESSION_LENGTH = 2_000
 MAX_AST_NODES = 256
-UNIT_FACTOR_PATTERN = re.compile(
-    r"^(?P<name>[A-Za-zµ°%][A-Za-z0-9µ°%_-]*)(?:\^(?P<power>-?\d+))?$"
-)
-
-
 UnitSignature = dict[str, int]
 
 
 def parse_unit_expression(unit: str) -> UnitSignature:
-    text = unit.replace(" ", "")
-    if text in {"", "1"}:
-        return {}
-    parts = re.split(r"([*/])", text)
-    if not parts or any(not part for part in parts):
-        raise ValueError(f"invalid unit expression: {unit!r}")
-    result: UnitSignature = {}
-    sign = 1
-    expect_factor = True
-    for part in parts:
-        if expect_factor:
-            match = UNIT_FACTOR_PATTERN.fullmatch(part)
-            if not match:
-                raise ValueError(f"invalid unit factor: {part!r}")
-            power = int(match.group("power") or "1")
-            if abs(power) > 16:
-                raise ValueError("unit exponent exceeds the supported range")
-            name = match.group("name")
-            result[name] = result.get(name, 0) + sign * power
-            if result[name] == 0:
-                del result[name]
-        else:
-            if part not in {"*", "/"}:
-                raise ValueError(f"invalid unit operator: {part!r}")
-            sign = 1 if part == "*" else -1
-        expect_factor = not expect_factor
-    if expect_factor:
-        raise ValueError(f"unit expression ends with an operator: {unit!r}")
-    return result
+    return dict(parse_unit(unit).dimensions)
 
 
 def _combine_units(

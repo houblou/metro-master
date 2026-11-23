@@ -1,6 +1,6 @@
 {
   "name": "metrology-lab-ai",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Assistant métrologique francophone avec calculs déterministes, statistiques d'ingénierie et rapports auditables.",
   "author": {
     "name": "MetrologyLab AI contributors",

@@ -30,6 +30,7 @@ class OneComponentBackend:
                                         "name": "u",
                                         "standard_uncertainty": 1.0,
                                         "sensitivity": 1.0,
+                                        "sensitivity_unit": "1",
                                         "owner": "bench",
                                         "unit": "kPa",
                                         "distribution": "unspecified",
@@ -39,12 +40,15 @@ class OneComponentBackend:
                                 ],
                                 "correlations": [],
                                 "coverage_factor": 2.0,
+                                "output_unit": "kPa",
                             },
                             "evidence": [
                                 {"field_path": "/components/0/standard_uncertainty", "source_ref": "user_request", "excerpt": "u = 1.0 kPa", "evidence_type": "provided"},
                                 {"field_path": "/components/0/sensitivity", "source_ref": "declared:method", "excerpt": "sensitivity 1.0", "evidence_type": "method_choice"},
+                                {"field_path": "/components/0/sensitivity_unit", "source_ref": "declared:method", "excerpt": "dimensionless sensitivity unit 1", "evidence_type": "method_choice"},
                                 {"field_path": "/components/0/unit", "source_ref": "user_request", "excerpt": "u = 1.0 kPa", "evidence_type": "provided"},
                                 {"field_path": "/coverage_factor", "source_ref": "user_request", "excerpt": "k = 2.0", "evidence_type": "provided"},
+                                {"field_path": "/output_unit", "source_ref": "declared:method", "excerpt": "output unit kPa", "evidence_type": "method_choice"},
                             ],
                             "assumptions": ["Correlations are assumed zero."],
                         }

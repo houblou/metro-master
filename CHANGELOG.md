@@ -1,6 +1,25 @@
 # Journal des versions
 
-Les changements importants de MetrologyLab AI sont consignés dans ce fichier. Le projet suit la numérotation sémantique. Avant la version 1.0, un changement de nom d'invocation ou d'installation augmente la version mineure.
+Les changements importants de MetrologyLab AI sont consignés dans ce fichier. Pendant la maturation `0.9.x`, chaque livraison incrémente uniquement le correctif (`0.9.0` → `0.9.1` → `0.9.2`). Le passage à `1.0.0` est réservé à une décision explicite de maturité et ne découle pas automatiquement du volume de changements.
+
+## [0.9.1] - 2026-11-23
+
+### Ajouté
+
+- unités explicites pour les coefficients de sensibilité et unité de sortie du budget ;
+- conversion dimensionnelle de chaque contribution avant propagation, y compris pour les effets de température ;
+- adaptateur Pint optionnel via l'extra `units`, avec refus explicite si la dépendance manque.
+
+### Unifié
+
+- le registre des formules et le budget d'incertitude utilisent désormais la même algèbre dimensionnelle interne ;
+- les sorties de budget exposent systématiquement leur unité.
+
+### Sécurisé
+
+- `MODEL-COMPILER` doit prouver `sensitivity_unit` et `output_unit`, qui ne peuvent plus rester implicites ;
+- une contribution incompatible avec l'unité du mesurande est rejetée avant le calcul ;
+- les conversions cohérentes, les incompatibilités et l'absence de Pint sont couvertes par des tests déterministes.
 
 ## [0.9.0] - 2026-11-23
 
@@ -80,6 +99,7 @@ Les changements importants de MetrologyLab AI sont consignés dans ce fichier. L
 - modules de calcul gouvernés, exports non officiels et tests automatisés ;
 - gestion des tokens avec profils `eco`, `standard` et `deep`.
 
+[0.9.1]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.9.1
 [0.9.0]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.9.0
 [0.8.0]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.8.0
 [0.7.1]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.7.1

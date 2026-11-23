@@ -1,15 +1,17 @@
 """Grandeurs et conversions déterministes du noyau minimal.
 
 Le module couvre les unités courantes du laboratoire sans dépendance externe.
-Les unités inconnues, logarithmiques ou contextuelles sont refusées. Un adaptateur
-scientifique optionnel pourra étendre ce registre sans modifier ces invariants.
+Les unités inconnues, logarithmiques ou contextuelles sont refusées. L'adaptateur
+Pint optionnel étend les conversions sans modifier ces invariants.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from math import isfinite
+import importlib
 import re
+from typing import Any
 
 
 FACTOR_PATTERN = re.compile(
@@ -23,6 +25,10 @@ class UnitSpec:
     dimensions: tuple[tuple[str, int], ...]
     scale: float
     offset: float = 0.0
+
+
+class DependencyUnavailable(RuntimeError):
+    """Une extension optionnelle demandée n'est pas installée."""
 
 
 def _dims(**values: int) -> tuple[tuple[str, int], ...]:
@@ -119,6 +125,38 @@ def compatible_units(left: str, right: str) -> bool:
     return parse_unit(left).dimensions == parse_unit(right).dimensions
 
 
+def multiply_unit_specs(left: UnitSpec, right: UnitSpec) -> UnitSpec:
+    dimensions = _combine(dict(left.dimensions), right.dimensions, 1)
+    symbol = right.symbol
+    if not right.dimensions and right.scale == 1.0:
+        symbol = left.symbol
+    elif not left.dimensions and left.scale == 1.0:
+        symbol = right.symbol
+    else:
+        symbol = f"{left.symbol}*{right.symbol}"
+    return UnitSpec(
+        symbol,
+        tuple(sorted(dimensions.items())),
+        left.scale * right.scale,
+    )
+
+
+def contribution_unit(input_unit: str, sensitivity_unit: str) -> UnitSpec:
+    """Unité de ``c_i u(x_i)`` ; les décalages ne s'appliquent pas aux écarts."""
+
+    return multiply_unit_specs(parse_unit(input_unit), parse_unit(sensitivity_unit))
+
+
+def convert_between_specs(value: float, source: UnitSpec, target: UnitSpec) -> float:
+    if not isfinite(value):
+        raise ValueError("quantity contribution must be finite")
+    if source.dimensions != target.dimensions:
+        raise ValueError(
+            f"incompatible contribution units: {source.symbol!r} and {target.symbol!r}"
+        )
+    return float(value) * source.scale / target.scale
+
+
 def convert_value(
     value: float,
     from_unit: str,
@@ -140,3 +178,39 @@ def convert_value(
 
 def convert_standard_uncertainty(value: float, from_unit: str, to_unit: str) -> float:
     return convert_value(value, from_unit, to_unit, difference=True)
+
+
+class PintQuantityAdapter:
+    """Adaptateur optionnel explicite ; aucun repli silencieux n'est autorisé."""
+
+    def __init__(self) -> None:
+        try:
+            pint = importlib.import_module("pint")
+        except ImportError as error:
+            raise DependencyUnavailable(
+                "Pint is not installed; install the 'units' extra to use this adapter"
+            ) from error
+        self._registry: Any = pint.UnitRegistry()
+
+    def convert_value(
+        self,
+        value: float,
+        from_unit: str,
+        to_unit: str,
+        *,
+        difference: bool = False,
+    ) -> float:
+        if difference:
+            source_delta = {
+                "°C": "delta_degC",
+                "degC": "delta_degC",
+                "K": "delta_kelvin",
+            }.get(from_unit, from_unit)
+            target_delta = {
+                "°C": "delta_degC",
+                "degC": "delta_degC",
+                "K": "delta_kelvin",
+            }.get(to_unit, to_unit)
+            quantity = self._registry.Quantity(value, source_delta)
+            return float(quantity.to(target_delta).magnitude)
+        return float(self._registry.Quantity(value, from_unit).to(to_unit).magnitude)

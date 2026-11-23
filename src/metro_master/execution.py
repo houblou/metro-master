@@ -446,7 +446,7 @@ class DeterministicEngine:
         DeterministicEngine._validate_payload_fields(
             payload,
             required={"components"},
-            optional={"correlations", "coverage_factor"},
+            optional={"correlations", "coverage_factor", "output_unit"},
             operation="budget",
         )
         components_value = payload["components"]
@@ -461,8 +461,8 @@ class DeterministicEngine:
             components,
             correlations,
             coverage_factor=payload.get("coverage_factor", 2.0),
+            output_unit=payload.get("output_unit"),
         ).to_dict()
-        result["unit"] = components[0].unit if components else ""
         return result
 
     @staticmethod
@@ -617,7 +617,7 @@ def _required_evidence_paths(
     if isinstance(value, (int, float)):
         paths[prefix or "/"] = float(value)
         return paths
-    if isinstance(value, str) and field_name == "unit":
+    if isinstance(value, str) and field_name.endswith("unit"):
         paths[prefix or "/"] = value
         return paths
     if isinstance(value, dict):
@@ -663,12 +663,23 @@ def _excerpt_contains_value(excerpt: str, expected: object) -> bool:
 def _require_explicit_compiled_fields(request: CalculationRequest) -> None:
     payload = request.payload
     if request.operation == "budget":
-        required_payload = {"components", "correlations", "coverage_factor"}
+        required_payload = {
+            "components",
+            "correlations",
+            "coverage_factor",
+            "output_unit",
+        }
         missing_payload = required_payload - set(payload)
         if missing_payload:
             raise ProvenanceValidationError(
                 "compiled budget must explicitly declare: "
                 + ", ".join(sorted(missing_payload))
+            )
+        if not isinstance(payload.get("output_unit"), str) or not payload[
+            "output_unit"
+        ].strip():
+            raise ProvenanceValidationError(
+                "compiled budget requires an explicit non-empty output_unit"
             )
         components = payload.get("components")
         if not isinstance(components, list) or not components:
@@ -679,6 +690,7 @@ def _require_explicit_compiled_fields(request: CalculationRequest) -> None:
             "name",
             "standard_uncertainty",
             "sensitivity",
+            "sensitivity_unit",
             "owner",
             "unit",
             "distribution",

@@ -35,6 +35,7 @@ class UncertaintyComponent:
     distribution: str = "unspecified"
     source: str = ""
     notes: str = ""
+    sensitivity_unit: str = "1"
 
     def __post_init__(self) -> None:
         require_text("component name", self.name)
@@ -51,6 +52,7 @@ class UncertaintyComponent:
         require_text(f"distribution for {self.name}", self.distribution)
         require_text(f"source for {self.name}", self.source, allow_empty=True)
         require_text(f"notes for {self.name}", self.notes, allow_empty=True)
+        require_text(f"sensitivity_unit for {self.name}", self.sensitivity_unit)
 
     @classmethod
     def from_dict(cls, value: dict[str, Any]) -> "UncertaintyComponent":

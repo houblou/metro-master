@@ -17,15 +17,21 @@ Un adaptateur peut continuer à rendre une chaîne de texte ordinaire. Pour dema
       "operation": "budget",
       "payload": {
         "coverage_factor": 2.0,
+        "correlations": [],
         "components": [
           {
             "name": "bench",
             "standard_uncertainty": 0.3,
             "sensitivity": 1.0,
+            "sensitivity_unit": "1",
             "owner": "bench",
-            "unit": "kPa"
+            "unit": "kPa",
+            "distribution": "unspecified",
+            "source": "user_request",
+            "degrees_of_freedom": null
           }
-        ]
+        ],
+        "output_unit": "kPa"
       }
     }
   ]
@@ -42,8 +48,21 @@ Lorsqu'une requête provient de `MODEL-COMPILER`, chaque nombre, booléen et uni
   "operation": "budget",
   "payload": {
     "components": [
-      {"name": "u1", "standard_uncertainty": 3.0, "unit": "kPa"}
-    ]
+      {
+        "name": "u1",
+        "standard_uncertainty": 3.0,
+        "sensitivity": 1.0,
+        "sensitivity_unit": "1",
+        "owner": "bench",
+        "unit": "kPa",
+        "distribution": "unspecified",
+        "source": "user_request",
+        "degrees_of_freedom": null
+      }
+    ],
+    "correlations": [],
+    "coverage_factor": 2.0,
+    "output_unit": "kPa"
   },
   "evidence": [
     {
@@ -51,9 +70,39 @@ Lorsqu'une requête provient de `MODEL-COMPILER`, chaque nombre, booléen et uni
       "source_ref": "user_request",
       "excerpt": "u1 = 3,0 kPa",
       "evidence_type": "provided"
+    },
+    {
+      "field_path": "/components/0/sensitivity",
+      "source_ref": "declared:method",
+      "excerpt": "coefficient de sensibilité 1,0 déclaré",
+      "evidence_type": "method_choice"
+    },
+    {
+      "field_path": "/components/0/sensitivity_unit",
+      "source_ref": "declared:method",
+      "excerpt": "unité de sensibilité 1 déclarée",
+      "evidence_type": "method_choice"
+    },
+    {
+      "field_path": "/components/0/unit",
+      "source_ref": "user_request",
+      "excerpt": "u1 = 3,0 kPa",
+      "evidence_type": "provided"
+    },
+    {
+      "field_path": "/coverage_factor",
+      "source_ref": "declared:method",
+      "excerpt": "facteur de couverture 2,0 déclaré",
+      "evidence_type": "method_choice"
+    },
+    {
+      "field_path": "/output_unit",
+      "source_ref": "user_request",
+      "excerpt": "u1 = 3,0 kPa",
+      "evidence_type": "provided"
     }
   ],
-  "assumptions": []
+  "assumptions": ["Les corrélations sont supposées nulles."]
 }
 ```
 
@@ -134,7 +183,8 @@ Après le dernier tour, `ConclusionVerifier` compare automatiquement valeur et u
 
 - toute valeur numérique critique doit être finie ;
 - le facteur de couverture doit être fini et strictement positif ;
-- les unités de composantes sont toutes identiques ou toutes non spécifiées ;
+- chaque contribution `sensibilité × incertitude d'entrée` doit être dimensionnellement compatible avec l'unité de sortie ;
+- les conversions cohérentes sont appliquées avant la propagation, y compris pour les coefficients de sensibilité typés ;
 - une corrélation non nulle exige une justification écrite ;
 - la matrice de corrélation doit être semi-définie positive ;
 - une covariance issue d'une séparation respecte la borne de Cauchy-Schwarz ;
