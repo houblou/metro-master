@@ -14,7 +14,7 @@ Les changements importants de METRO-MASTER sont consignés dans ce fichier. Le p
 - ajout d'une règle explicite maintenant les documents privés hors du dépôt public, de ses manifestes et de ses métadonnées ;
 - contrôle automatisé de l'absence d'identifiants réservés dans le catalogue distribué.
 
-## [0.7.0] - 2026-11-23
+## 0.7.0 - 2026-11-23
 
 ### Ajouté
 
@@ -35,7 +35,7 @@ Les changements importants de METRO-MASTER sont consignés dans ce fichier. Le p
 
 - brouillon V2 ajouté par erreur et son test documentaire ; le contenu reste récupérable dans l'historique Git au commit `c6303f7`.
 
-## [0.6.0] - 2026-11-20
+## 0.6.0 - 2026-11-20
 
 ### Ajouté
 
@@ -45,6 +45,4 @@ Les changements importants de METRO-MASTER sont consignés dans ce fichier. Le p
 - modules de calcul gouvernés, exports non officiels et tests automatisés ;
 - gestion des tokens avec profils `eco`, `standard` et `deep`.
 
-[0.7.1]: https://github.com/houblou/metro-master/compare/v0.7.0...v0.7.1
-[0.7.0]: https://github.com/houblou/metro-master/compare/v0.6.0...v0.7.0
-[0.6.0]: https://github.com/houblou/metro-master/releases/tag/v0.6.0
+[0.7.1]: https://github.com/houblou/metro-master/releases/tag/v0.7.1
