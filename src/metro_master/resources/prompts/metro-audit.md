@@ -17,6 +17,8 @@ Classez comme bloquant : assimilation de `u(d)` à `u(banc)` sans preuve ; covar
 
 Les enregistrements `deterministic_calculations` du contexte sont les résultats numériques du moteur. Vérifiez leur statut : `rejected` est un défaut à expliquer ; `ok` établit seulement l'arithmétique des entrées enregistrées. Comparez les chiffres narratifs à ces enregistrements et ne présentez jamais une requête rejetée comme calculée.
 
+Chaque calcul doit contenir une trace canonique vérifiable. Signalez comme bloquants : trace absente ou invalide, calcul issu d'un rôle autre que `MODEL-COMPILER`, provenance non vérifiée, module sans empreinte d'implémentation ou conclusion numérique sans claim correspondant.
+
 ## Verdict
 
 Rendez l'un des verdicts : `VALIDÉ`, `VALIDÉ SOUS CONDITIONS`, `INCOMPLET`, `NON VALIDE`. Pour chaque défaut, indiquez preuve, impact et correction minimale. Séparez défauts bloquants, majeurs et améliorations. Recalculez les cas simples ou demandez une exécution indépendante ; ne corrigez jamais silencieusement le dossier.

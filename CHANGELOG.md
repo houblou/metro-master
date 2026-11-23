@@ -2,6 +2,27 @@
 
 Les changements importants de MetrologyLab AI sont consignés dans ce fichier. Le projet suit la numérotation sémantique. Avant la version 1.0, un changement de nom d'invocation ou d'installation augmente la version mineure.
 
+## [0.9.0] - 2026-11-23
+
+### Sécurisé
+
+- seul `MODEL-COMPILER` peut désormais soumettre une requête de calcul provenant d'un agent ; les autres tentatives sont rejetées et tracées ;
+- ajout d'une porte de complétude déterministe après `METRO-AUDIT` afin qu'un calcul non couvert ne termine plus comme succès silencieux ;
+- chaque calcul, réussi ou rejeté, porte une trace canonique avec preuves, module, versions, empreintes et chaîne de traces ;
+- les sorties CLI de calcul utilisent la même enveloppe traçable et peuvent écrire la trace avec `--trace-out`.
+
+### Ajouté
+
+- registre gelé des quatre sources scientifiques avec commits, blobs, licences et modes d'usage ;
+- alias publics `metrology_lab_ai`, `python -m metrology_lab_ai` et `metrology-lab-ai` ;
+- exécution des tests du layout `src` sans installation via `python -m unittest discover -s tests -t .`.
+
+### Corrigé
+
+- `CONTEXT.md` décrit maintenant `StudyStore` et la persistance réellement disponible ;
+- Welch–Satterthwaite est calculé lorsque les corrélations ne touchent que des composantes à degrés de liberté infinis ;
+- une corrélation impliquant une composante à degrés de liberté finis reste explicitement non calculable sans modèle conjoint validé.
+
 ## [0.8.0] - 2026-11-23
 
 ### Renommé
@@ -59,5 +80,6 @@ Les changements importants de MetrologyLab AI sont consignés dans ce fichier. L
 - modules de calcul gouvernés, exports non officiels et tests automatisés ;
 - gestion des tokens avec profils `eco`, `standard` et `deep`.
 
+[0.9.0]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.9.0
 [0.8.0]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.8.0
 [0.7.1]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.7.1

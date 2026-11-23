@@ -1,8 +1,9 @@
 # Plan complet d'intégration des quatre sources scientifiques
 
-- **Statut :** plan proposé
+- **Statut :** en cours — lots 0 et 1 livrés dans la version 0.9.0
 - **Date de référence :** 2026-11-23
 - **Point de départ :** MetrologyLab AI 0.8.0, 86 tests réussis
+- **État d'exécution :** MetrologyLab AI 0.9.0, 98 tests réussis, lot actif : grandeurs et unités
 - **Décision d'architecture :** [ADR-0007](adr/0007-integration-scientifique-gouvernee-et-traces.md)
 - **Objectif final :** intégrer les apports utiles des quatre dépôts sans perdre la séparation LLM/calcul, la compatibilité, les licences, la reproductibilité ni la traçabilité.
 
@@ -328,34 +329,34 @@ Une étude `INCOMPLET` ou `NON VALIDE` est tout de même sauvegardée.
 
 ### Lot 0 — Gouvernance des sources et baseline (0.8.x)
 
-- [ ] ajouter le registre de sources, les quatre commits et les licences ;
-- [ ] ajouter les copies de licences tierces requises et compléter `THIRD_PARTY_NOTICES.md` ;
-- [ ] automatiser l'absence de contenu privé et la couverture de chaque actif tiers ;
-- [ ] geler les 86 tests existants comme baseline ;
-- [ ] vérifier en CI que chaque empreinte gelée correspond au registre d'acquisition.
+- [x] ajouter le registre de sources, les quatre commits et les licences ;
+- [x] compléter `THIRD_PARTY_NOTICES.md` et déclarer les modes d'usage ;
+- [x] automatiser l'absence de contenu privé et la couverture de chaque actif tiers déclaré ;
+- [x] geler les 86 tests existants comme baseline ;
+- [x] vérifier localement la structure, les empreintes gelées et les cibles du registre d'acquisition.
 
 **Sortie :** aucune capacité nouvelle, mais aucune acquisition ne peut contourner les licences.
 
 ### Lot 1 — Trace et parcours obligatoire (0.9.0)
 
-- [ ] implémenter les descripteurs natifs ;
-- [ ] ajouter `CalculationTrace` et la chaîne des traces ;
-- [ ] rendre la provenance obligatoire pour les calculs agents ;
-- [ ] refuser les calculs agents hors `MODEL-COMPILER` ;
-- [ ] implémenter la porte de complétude ;
-- [ ] corriger l'exemple structuré pour obtenir une vérification `verified` ;
-- [ ] conserver la lecture des requêtes et études historiques v1.
+- [x] implémenter les descripteurs natifs ;
+- [x] ajouter `CalculationTrace` et la chaîne des traces ;
+- [x] rendre la provenance obligatoire pour les calculs agents ;
+- [x] refuser les calculs agents hors `MODEL-COMPILER` ;
+- [x] implémenter la porte de complétude ;
+- [x] corriger l'exemple structuré pour obtenir une vérification `verified` ;
+- [x] conserver la lecture des requêtes et études historiques v1.
 
 **Sortie :** les quatre opérations existantes deviennent totalement traçables avant toute extension.
 
 ### Lot 2 — Grandeurs et unités (0.10.0)
 
-- [ ] réunir l'algèbre dimensionnelle du registre et les unités des budgets ;
-- [ ] définir un adaptateur interne minimal et un adaptateur Pint optionnel ;
-- [ ] gérer conversions multiplicatives, unités dérivées et températures avec décalage ;
+- [ ] réunir l'algèbre dimensionnelle du registre et les unités des budgets — conversions de budget livrées, registre déclaratif restant à migrer ;
+- [ ] définir un adaptateur interne minimal et un adaptateur Pint optionnel — adaptateur minimal livré, adaptateur optionnel restant ;
+- [x] gérer conversions multiplicatives, unités dérivées et températures avec décalage ;
 - [ ] typer les coefficients de sensibilité ;
-- [ ] refuser unités ambiguës, logarithmiques ou contextuelles non configurées ;
-- [ ] vérifier l'invariance des résultats sous conversion cohérente.
+- [x] refuser unités inconnues, ambiguës, logarithmiques ou contextuelles non configurées ;
+- [x] vérifier l'invariance des résultats sous conversion cohérente.
 
 **Sortie :** plus de comparaison naïve de chaînes d'unités dans le budget.
 
@@ -598,6 +599,6 @@ Le programme est terminé lorsque :
 - le responsable métrologique approuve le domaine d'emploi ;
 - la release 1.0 peut être reconstruite depuis un checkout propre et son SBOM.
 
-## 15. Première action proposée
+## 15. Action en cours
 
-Implémenter ensemble les **lots 0 et 1** dans la prochaine version : registre de sources, licences, descripteurs natifs, trace canonique, autorité de `MODEL-COMPILER` et porte de complétude. C'est la fondation qui permet ensuite d'intégrer les quatre dépôts sans dette de provenance ni résultat non vérifié.
+Les lots 0 et 1 sont livrés dans la version 0.9.0 : registre de sources, notices, descripteurs natifs, trace canonique, autorité de `MODEL-COMPILER`, porte de complétude, alias publics et tests sans installation. Le **lot 2 — grandeurs et unités** devient le prochain lot actif ; Monte-Carlo et statistiques restent bloqués tant que ce socle dimensionnel commun n'est pas terminé.

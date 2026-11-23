@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "assets": [
+    {
+      "source_id": "kdense-uncertainty-and-units",
+      "repository": "K-Dense-AI/scientific-agent-skills",
+      "commit": "c21d13b3cc2894680229ba9959a53281acb9200e",
+      "path": "skills/uncertainty-and-units/SKILL.md",
+      "blob_sha": "28bcc333961e29f41681a7b7afdd01f402d54646",
+      "license": "MIT",
+      "usage_mode": "reference_only",
+      "local_targets": ["docs/plan-integration-quatre-sources.md"],
+      "modifications": "Principes retenus comme source de conception; aucun script tiers activé.",
+      "review_status": "frozen"
+    },
+    {
+      "source_id": "kdense-metrology-scientist",
+      "repository": "K-Dense-AI/scientific-agents",
+      "commit": "98c7fae46648724e1a43a1f2b207b0c82fcc462e",
+      "path": "scientific-agents/metrology-scientist/skills/metrology-scientist/SKILL.md",
+      "blob_sha": "2c02833eaa58e9171fbb0ce7dfa9f0eefc8ab4b0",
+      "license": "MIT",
+      "usage_mode": "reference_only",
+      "local_targets": ["docs/plan-integration-quatre-sources.md"],
+      "modifications": "Cartographie des domaines uniquement; validation française indépendante requise.",
+      "review_status": "frozen"
+    },
+    {
+      "source_id": "nist-stat-handbook-pack",
+      "repository": "jgsystemsconsulting/jgs-se-knowledge-packs",
+      "commit": "f0a8cf25e69859fdcb6d3ea2ff9a2c9751fb1df5",
+      "path": "packs/nist-stat-handbook/SKILL.md",
+      "blob_sha": "12ce94e3db1fd8cf07153fa347eb0aefe1979c85",
+      "license": "US-Public-Domain-pack-and-MIT-tooling",
+      "usage_mode": "adapt",
+      "local_targets": ["skills/metrology-lab-ai/references/statistiques-nist-fr.md"],
+      "modifications": "Synthèse française avec portes de décision et attribution sans endorsement.",
+      "review_status": "frozen"
+    },
+    {
+      "source_id": "mp-ai-20-metrology",
+      "repository": "MP-AI-20/mechanical-engineering-skills",
+      "commit": "50434c7cdfe93d132534b7375a4c1d2d81d5029d",
+      "path": "skills/metrology/SKILL.md",
+      "blob_sha": "d4da11cfcfcf0bd41972c29074caa66c73a1038a",
+      "license": "MIT",
+      "usage_mode": "reference_only",
+      "local_targets": ["docs/plan-integration-quatre-sources.md"],
+      "modifications": "Thèmes CMM et GD&T retenus pour le plan; aucun contenu normatif tiers copié.",
+      "review_status": "frozen"
+    }
+  ]
+}

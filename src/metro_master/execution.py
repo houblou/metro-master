@@ -25,6 +25,7 @@ from .module_registry import (
     validate_module_id,
 )
 from .research import MAX_RESEARCH_REQUESTS_PER_TURN, ResearchRequest
+from .trace import CalculationTrace, build_calculation_trace
 from .uncertainty import propagate_linear
 from .validation import require_correlation, require_nonzero_justification, require_text
 
@@ -169,6 +170,7 @@ class CalculationRecord:
     provenance_checked: bool = False
     provenance_status: str = "not_checked"
     provenance_warnings: tuple[str, ...] = ()
+    trace: CalculationTrace | None = None
 
     def to_dict(self) -> dict[str, object]:
         return asdict(self)
@@ -317,7 +319,7 @@ class DeterministicEngine:
     def calculate(self, request: CalculationRequest) -> dict[str, object]:
         return self.registry.calculate(request.operation, request.payload)
 
-    def list_modules(self) -> tuple[dict[str, str], ...]:
+    def list_modules(self) -> tuple[dict[str, object], ...]:
         return self.registry.describe()
 
     def execute(
@@ -327,7 +329,22 @@ class DeterministicEngine:
         require_provenance: bool = False,
         evidence_text: str = "",
         evidence_sources: dict[str, str] | None = None,
+        execution_origin: str = "structured_input",
+        previous_trace_sha256: str = "",
     ) -> CalculationRecord:
+        descriptor: dict[str, object]
+        try:
+            descriptor = self.registry.descriptor(request.operation)
+        except (KeyError, TypeError, ValueError):
+            descriptor = {
+                "id": request.operation,
+                "version": "unknown",
+                "title": "Unknown calculation module",
+                "kind": "unknown",
+                "algorithm_id": "unknown",
+                "implementation_sha256": "",
+                "validation_suite_sha256": "",
+            }
         try:
             provenance_status = "not_checked"
             warnings: tuple[str, ...] = ()
@@ -337,25 +354,92 @@ class DeterministicEngine:
                     evidence_text,
                     evidence_sources=evidence_sources,
                 )
+            result = self.calculate(request)
+            trace = build_calculation_trace(
+                request=request.to_dict(),
+                module=descriptor,
+                status="ok",
+                result=result,
+                execution_origin=execution_origin,
+                provenance_required=require_provenance,
+                provenance_status=provenance_status,
+                previous_trace_sha256=previous_trace_sha256,
+            )
             return CalculationRecord(
                 request,
                 "ok",
-                result=self.calculate(request),
+                result=result,
                 provenance_checked=require_provenance,
                 provenance_status=provenance_status,
                 provenance_warnings=warnings,
+                trace=trace,
             )
         except (KeyError, TypeError, ValueError, ArithmeticError) as error:
+            provenance_status = "rejected" if require_provenance else "not_checked"
+            trace = build_calculation_trace(
+                request=request.to_dict(),
+                module=descriptor,
+                status="rejected",
+                result=None,
+                execution_origin=execution_origin,
+                provenance_required=require_provenance,
+                provenance_status=provenance_status,
+                previous_trace_sha256=previous_trace_sha256,
+                error_type=type(error).__name__,
+                error=str(error),
+            )
             return CalculationRecord(
                 request,
                 "rejected",
                 error_type=type(error).__name__,
                 error=str(error),
                 provenance_checked=require_provenance,
-                provenance_status=(
-                    "rejected" if require_provenance else "not_checked"
-                ),
+                provenance_status=provenance_status,
+                trace=trace,
             )
+
+    def reject(
+        self,
+        request: CalculationRequest,
+        *,
+        error_type: str,
+        error: str,
+        execution_origin: str,
+        previous_trace_sha256: str = "",
+    ) -> CalculationRecord:
+        try:
+            descriptor = self.registry.descriptor(request.operation)
+        except (KeyError, TypeError, ValueError):
+            descriptor = {
+                "id": request.operation,
+                "version": "unknown",
+                "title": "Unknown calculation module",
+                "kind": "unknown",
+                "algorithm_id": "unknown",
+                "implementation_sha256": "",
+                "validation_suite_sha256": "",
+            }
+        trace = build_calculation_trace(
+            request=request.to_dict(),
+            module=descriptor,
+            status="rejected",
+            result=None,
+            execution_origin=execution_origin,
+            provenance_required=True,
+            provenance_status="rejected",
+            previous_trace_sha256=previous_trace_sha256,
+            error_type=error_type,
+            error=error,
+        )
+        return CalculationRecord(
+            request,
+            "rejected",
+            error_type=error_type,
+            error=error,
+            provenance_checked=True,
+            provenance_status="rejected",
+            trace=trace,
+        )
 
     @staticmethod
     def _budget(payload: dict[str, Any]) -> dict[str, object]:
@@ -622,7 +706,9 @@ def _require_explicit_compiled_fields(request: CalculationRequest) -> None:
                 "compiled budget correlations must be an explicit array"
             )
         if not correlations and not any(
-            "correl" in assumption.casefold() for assumption in request.assumptions
+            token in assumption.casefold()
+            for assumption in request.assumptions
+            for token in ("correl", "corrél")
         ):
             raise ProvenanceValidationError(
                 "an empty correlation model requires an explicit assumption"

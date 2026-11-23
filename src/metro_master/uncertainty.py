@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from math import inf, isclose, sqrt
 from typing import Iterable
 
 from .models import Correlation, UncertaintyComponent
+from .quantities import convert_standard_uncertainty
 from .validation import require_positive, validate_compatible_units
 
 
@@ -30,6 +31,7 @@ class BudgetResult:
     terms: tuple[VarianceTerm, ...]
     diagonal_variance_by_owner: dict[str, float]
     warnings: tuple[str, ...]
+    effective_degrees_of_freedom_method: str
 
     def to_dict(self) -> dict[str, object]:
         data = asdict(self)
@@ -117,9 +119,11 @@ def propagate_linear(
 ) -> BudgetResult:
     """Apply ``u²(y) = cᵀ U c`` to a first-order measurement model.
 
-    Degrees of freedom are calculated by Welch-Satterthwaite only when all
-    off-diagonal correlations are zero. For correlated inputs the function
-    returns ``None`` instead of presenting an unjustified approximation.
+    Welch-Satterthwaite remains applicable when every input carrying a finite
+    degree of freedom is independent. Correlations between inputs treated with
+    infinite degrees of freedom contribute to the combined variance but not to
+    the denominator. A correlation touching a finite-degree component requires
+    a richer sampling model and therefore remains explicitly uncalculated.
     """
 
     components = list(components)
@@ -127,7 +131,19 @@ def propagate_linear(
     if not components:
         raise ValueError("at least one uncertainty component is required")
     require_positive("coverage_factor", coverage_factor)
-    validate_compatible_units(components)
+    common_unit = validate_compatible_units(components)
+    components = [
+        replace(
+            component,
+            standard_uncertainty=convert_standard_uncertainty(
+                component.standard_uncertainty,
+                component.unit,
+                common_unit,
+            ),
+            unit=common_unit,
+        )
+        for component in components
+    ]
     matrix = build_correlation_matrix(components, correlations)
 
     terms: list[VarianceTerm] = []
@@ -168,14 +184,34 @@ def propagate_linear(
     standard = sqrt(variance)
     has_correlation = any(matrix[i][j] != 0 for i in range(len(matrix)) for j in range(i))
     warnings: list[str] = []
-    if has_correlation:
+    finite_dof_positions = {
+        index
+        for index, component in enumerate(components)
+        if component.degrees_of_freedom is not None
+    }
+    finite_dof_correlation = any(
+        matrix[i][j] != 0
+        and (i in finite_dof_positions or j in finite_dof_positions)
+        for i in range(len(matrix))
+        for j in range(i)
+    )
+    if finite_dof_correlation:
         effective_dof = None
+        effective_dof_method = "not_applicable_correlated_finite_dof"
         warnings.append(
-            "Effective degrees of freedom are not estimated for correlated inputs; "
-            "justify a coverage factor by another validated method."
+            "Welch-Satterthwaite is not applied because a non-zero correlation "
+            "touches an input with finite degrees of freedom; provide a validated "
+            "joint sampling model or another coverage method."
         )
     else:
         effective_dof = _effective_degrees_of_freedom(components, variance)
+        effective_dof_method = "welch_satterthwaite"
+        if has_correlation:
+            warnings.append(
+                "Welch-Satterthwaite was applied because all correlated inputs "
+                "carry infinite degrees of freedom; finite-degree inputs remain "
+                "mutually independent."
+            )
     if any(term.kind == "covariance" and len(set(term.owners)) > 1 for term in terms):
         warnings.append(
             "Cross-owner covariance terms are reported separately and are not allocated "
@@ -192,5 +228,6 @@ def propagate_linear(
         terms=tuple(terms),
         diagonal_variance_by_owner=by_owner,
         warnings=tuple(warnings),
+        effective_degrees_of_freedom_method=effective_dof_method,
     )
 

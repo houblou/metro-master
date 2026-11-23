@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metro-master"
-version = "0.8.0"
+version = "0.9.0"
 description = "MetrologyLab AI — orchestration métrologique et moteur de calcul vérifiable"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -17,6 +17,7 @@ pdf = ["pypdf>=6,<7"]
 
 [project.scripts]
 metro-master = "metro_master.cli:main"
+metrology-lab-ai = "metro_master.cli:public_main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

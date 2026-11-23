@@ -3,6 +3,8 @@
 Le service de recherche réel et le backend LLM restent à fournir par l'intégrateur.
 """
 
+import _bootstrap  # noqa: F401
+
 from metro_master import CallableResearchProvider, KnowledgeStore, ResearchSource
 from metro_master.orchestrator import MetroOrchestrator
 

@@ -6,6 +6,7 @@ import ast
 from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
 from hashlib import sha256
+import inspect
 import json
 from math import cos, e, exp, isfinite, log, log10, pi, sin, sqrt, tan
 from pathlib import Path
@@ -424,6 +425,27 @@ class NativeCalculationModule:
     def calculate(self, payload: dict[str, Any]) -> dict[str, object]:
         return self.handler(payload)
 
+    def descriptor(self) -> dict[str, object]:
+        try:
+            implementation = inspect.getsource(self.handler)
+        except (OSError, TypeError):
+            implementation = f"{self.handler.__module__}:{self.handler.__qualname__}"
+        implementation_hash = sha256(implementation.encode("utf-8")).hexdigest()
+        validation_contract = (
+            f"native:{self.id}:{self.version}:unit+validation+orchestrator-regression"
+        )
+        return {
+            "id": self.id,
+            "version": self.version,
+            "title": self.title,
+            "kind": self.kind,
+            "algorithm_id": f"metrology-lab-ai/{self.id}/{self.version}",
+            "implementation_sha256": implementation_hash,
+            "validation_suite_sha256": sha256(
+                validation_contract.encode("utf-8")
+            ).hexdigest(),
+        }
+
 
 class SafeFormula:
     _functions: Mapping[str, Callable[..., float]] = {
@@ -666,6 +688,25 @@ class FormulaCalculationModule:
             "definition_sha256": self.definition.integrity_sha256(),
         }
 
+    def descriptor(self) -> dict[str, object]:
+        validation_payload = [asdict(item) for item in self.definition.validation_cases]
+        return {
+            "id": self.id,
+            "version": self.version,
+            "title": self.title,
+            "kind": self.kind,
+            "algorithm_id": f"governed-formula/{self.id}/{self.version}",
+            "implementation_sha256": self.definition.integrity_sha256(),
+            "validation_suite_sha256": sha256(
+                json.dumps(
+                    validation_payload,
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode("utf-8")
+            ).hexdigest(),
+        }
+
     def validate(self) -> ModuleValidationReport:
         results = []
         for case in self.definition.validation_cases:
@@ -737,14 +778,24 @@ class ModuleRegistry:
     def calculate(self, module_id: str, payload: dict[str, Any]) -> dict[str, object]:
         return self.get(module_id).calculate(payload)
 
-    def describe(self) -> tuple[dict[str, str], ...]:
+    def descriptor(self, module_id: str) -> dict[str, object]:
+        module = self.get(module_id)
+        descriptor = getattr(module, "descriptor", None)
+        if callable(descriptor):
+            return descriptor()
+        return {
+            "id": module.id,
+            "version": module.version,
+            "title": module.title,
+            "kind": module.kind,
+            "algorithm_id": f"unknown/{module.id}/{module.version}",
+            "implementation_sha256": "",
+            "validation_suite_sha256": "",
+        }
+
+    def describe(self) -> tuple[dict[str, object], ...]:
         return tuple(
-            {
-                "id": module.id,
-                "version": module.version,
-                "title": module.title,
-                "kind": module.kind,
-            }
+            self.descriptor(module.id)
             for module in sorted(self._modules.values(), key=lambda item: item.id)
         )
 

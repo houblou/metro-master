@@ -71,6 +71,8 @@ def render_technical_report(snapshot: StudySnapshot) -> str:
         lines.append("Aucun calcul déterministe enregistré.")
     for agent, record in calculations:
         request = record.get("request", {})
+        trace = record.get("trace") or {}
+        module = trace.get("module") or {}
         lines.extend(
             [
                 f"### {request.get('id', 'sans-id')} — {agent}",
@@ -78,17 +80,22 @@ def render_technical_report(snapshot: StudySnapshot) -> str:
                 f"- Opération : `{request.get('operation', '')}`",
                 f"- Statut : `{record.get('status', '')}`",
                 f"- Provenance : `{record.get('provenance_status', 'not_checked')}`",
+                f"- Module : `{module.get('id', '')}@{module.get('version', '')}`",
+                f"- Trace : `{trace.get('trace_sha256', 'absente')}`",
                 f"- Résultat : `{record.get('result')}`",
                 f"- Erreur : `{record.get('error') or ''}`",
                 "",
             ]
         )
     verification = snapshot.orchestration.get("conclusion_verification") or {}
+    completion = snapshot.orchestration.get("completion_report") or {}
     lines.extend(
         [
             "## Vérification de la conclusion",
             "",
             f"- Statut numérique : `{verification.get('status', 'absent')}`",
+            f"- Verdict de complétude : `{completion.get('verdict', 'absent')}`",
+            f"- Réserves : `{completion.get('issues', [])}`",
             "- Portée : vérification des affirmations numériques structurées uniquement.",
             "- Revue sémantique et métrologique humaine toujours requise.",
             "",
@@ -145,10 +152,13 @@ def render_draft_certificate(
         ]
     )
     calculations = _calculations(snapshot)
-    if not calculations:
+    completion = snapshot.orchestration.get("completion_report") or {}
+    publishable = completion.get("verdict") in {"VALIDÉ", "VALIDÉ SOUS CONDITIONS"}
+    if not calculations or not publishable:
         lines.append("Aucun résultat publiable n'est disponible.")
-    for agent, record in calculations:
+    for agent, record in calculations if publishable else ():
         request = record.get("request", {})
+        trace = record.get("trace") or {}
         lines.extend(
             [
                 f"### {request.get('id', 'sans-id')}",
@@ -156,6 +166,7 @@ def render_draft_certificate(
                 f"- Agent demandeur : `{agent}`",
                 f"- Statut moteur : `{record.get('status', '')}`",
                 f"- Statut provenance : `{record.get('provenance_status', 'not_checked')}`",
+                f"- Empreinte de trace : `{trace.get('trace_sha256', 'absente')}`",
                 f"- Résultat brut : `{record.get('result')}`",
                 "",
             ]
@@ -179,6 +190,7 @@ def render_draft_certificate(
 
 def render_accreditation_assessment(snapshot: StudySnapshot) -> str:
     verification = snapshot.orchestration.get("conclusion_verification") or {}
+    completion = snapshot.orchestration.get("completion_report") or {}
     calculations = _calculations(snapshot)
     rejected = [
         record
@@ -189,6 +201,7 @@ def render_accreditation_assessment(snapshot: StudySnapshot) -> str:
         "PRÊT POUR REVUE HUMAINE"
         if calculations
         and verification.get("status") == "verified"
+        and completion.get("verdict") in {"VALIDÉ", "VALIDÉ SOUS CONDITIONS"}
         and not rejected
         else "PREUVES INSUFFISANTES"
     )
@@ -203,6 +216,7 @@ def render_accreditation_assessment(snapshot: StudySnapshot) -> str:
             "",
             f"- État de préparation : **{readiness}**",
             f"- Vérification numérique de conclusion : `{verification.get('status', 'absent')}`",
+            f"- Verdict de complétude : `{completion.get('verdict', 'absent')}`",
             f"- Calculs rejetés : `{len(rejected)}`",
             f"- Sources Web enregistrées : `{len(_research_sources(snapshot))}`",
             "",
@@ -213,6 +227,7 @@ def render_accreditation_assessment(snapshot: StudySnapshot) -> str:
             f"| Intégrité du dossier | SHA-256 `{snapshot.integrity_sha256}` | Vérifier la chaîne et les droits d'accès |",
             f"| Résultats numériques | {len(calculations)} enregistrement(s) | Confirmer modèle, domaine et unités |",
             f"| Conclusion | `{verification.get('status', 'absent')}` | Examiner le sens et l'applicabilité |",
+            f"| Complétude | `{completion.get('verdict', 'absent')}` | Lever les réserves avant émission |",
             f"| Sources | {len(_research_sources(snapshot))} source(s) | Vérifier textes applicables et éditions |",
             "| Portée d'accréditation | Non déterminée par le logiciel | Décision réservée à l'organisme compétent |",
             "",

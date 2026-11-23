@@ -11,6 +11,8 @@ from .agents import compose_prompt
 from .conclusion import (
     ConclusionClaim,
     ConclusionVerificationReport,
+    CompletionReport,
+    evaluate_completion,
     verify_conclusion,
 )
 from .execution import CalculationRecord, DeterministicEngine, parse_agent_response
@@ -88,6 +90,7 @@ class OrchestrationResult:
     plan: RoutingPlan
     turns: tuple[AgentTurn, ...]
     conclusion_verification: ConclusionVerificationReport | None = None
+    completion_report: CompletionReport | None = None
     study_reference: StudyReference | None = None
     token_budget: dict[str, object] | None = None
 
@@ -340,6 +343,14 @@ class MetroOrchestrator:
         for agent in policy_skips:
             ledger.skip(agent, f"omitted by {self.token_policy.mode} token profile")
         turns: list[AgentTurn] = []
+        trace_cursor = ""
+        if self.study_store is not None and study_id is not None:
+            try:
+                prior = self.study_store.load(study_id)
+            except KeyError:
+                prior = None
+            if prior is not None:
+                trace_cursor = self._last_trace_sha256(prior.orchestration)
         for step in plan.steps:
             try:
                 if step.agent == "PDF-EXTRACTOR" and document_chunks:
@@ -352,29 +363,39 @@ class MetroOrchestrator:
                         request, backend, step, turns, ledger
                     )
                     continue
-                turns.append(
-                    self._complete_turn(
-                        step=step,
-                        backend=backend,
-                        request=request,
-                        context=self._context(
-                            turns,
-                            knowledge_query=request,
-                            token_ledger=ledger,
-                        ),
-                        sequence=len(turns) + 1,
+                turn = self._complete_turn(
+                    step=step,
+                    backend=backend,
+                    request=request,
+                    context=self._context(
+                        turns,
+                        knowledge_query=request,
                         token_ledger=ledger,
-                    )
+                    ),
+                    sequence=len(turns) + 1,
+                    token_ledger=ledger,
+                    previous_trace_sha256=trace_cursor,
                 )
+                turns.append(turn)
+                for record in turn.calculations:
+                    if record.trace is not None:
+                        trace_cursor = record.trace.trace_sha256
             except TokenBudgetExceeded as error:
                 if step.agent == "METRO-AUDIT":
                     raise
                 ledger.skip(step.agent, str(error))
         conclusion_verification = verify_conclusion(turns)
+        completion_report = evaluate_completion(
+            turns,
+            conclusion_verification,
+            required_agents=(step.agent for step in full_plan.steps),
+            actual_agents=(step.agent for step in plan.steps),
+        )
         result = OrchestrationResult(
             plan,
             tuple(turns),
             conclusion_verification=conclusion_verification,
+            completion_report=completion_report,
             token_budget=ledger.to_dict(),
         )
         if self.study_store is not None:
@@ -573,6 +594,7 @@ class MetroOrchestrator:
         allow_research: bool = False,
         seen_research_queries: set[str] | None = None,
         token_ledger: TokenLedger,
+        previous_trace_sha256: str = "",
     ) -> AgentTurn:
         system_prompt = compose_prompt(step.agent, self.token_policy)
         context = self._compact_context_for_call(
@@ -624,14 +646,32 @@ class MetroOrchestrator:
             raise RuntimeError(
                 f"backend returned an invalid response for {step.agent}: {error}"
             ) from error
-        calculations = tuple(
-            self.engine.execute(
-                calculation,
-                require_provenance=step.agent == "MODEL-COMPILER",
-                evidence_sources=self._trusted_evidence_sources(request, context),
-            )
-            for calculation in parsed.calculation_requests
-        )
+        calculations_list = []
+        trace_cursor = previous_trace_sha256
+        for calculation in parsed.calculation_requests:
+            if step.agent != "MODEL-COMPILER":
+                record = self.engine.reject(
+                    calculation,
+                    error_type="CalculationRoleViolation",
+                    error=(
+                        "only MODEL-COMPILER may submit publishable calculation "
+                        "requests from an agent response"
+                    ),
+                    execution_origin=f"agent:{step.agent}",
+                    previous_trace_sha256=trace_cursor,
+                )
+            else:
+                record = self.engine.execute(
+                    calculation,
+                    require_provenance=True,
+                    evidence_sources=self._trusted_evidence_sources(request, context),
+                    execution_origin="agent:MODEL-COMPILER",
+                    previous_trace_sha256=trace_cursor,
+                )
+            calculations_list.append(record)
+            if record.trace is not None:
+                trace_cursor = record.trace.trace_sha256
+        calculations = tuple(calculations_list)
         submissions = tuple(
             self._submit_module_proposal(step.agent, proposal)
             for proposal in parsed.module_proposals
@@ -690,6 +730,28 @@ class MetroOrchestrator:
                 )
             seen_research_queries.add(signature)
         return execute_research(self.research_provider, request)
+
+    @staticmethod
+    def _last_trace_sha256(orchestration: dict[str, object]) -> str:
+        turns = orchestration.get("turns", [])
+        if not isinstance(turns, list):
+            return ""
+        latest = ""
+        for turn in turns:
+            if not isinstance(turn, dict):
+                continue
+            calculations = turn.get("calculations", [])
+            if not isinstance(calculations, list):
+                continue
+            for record in calculations:
+                if not isinstance(record, dict):
+                    continue
+                trace = record.get("trace")
+                if isinstance(trace, dict) and isinstance(
+                    trace.get("trace_sha256"), str
+                ):
+                    latest = trace["trace_sha256"]
+        return latest
 
     def _submit_module_proposal(
         self, agent: str, proposal: dict[str, object]

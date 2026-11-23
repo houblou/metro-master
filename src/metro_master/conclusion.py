@@ -85,6 +85,18 @@ class ConclusionVerificationReport:
         return asdict(self)
 
 
+@dataclass(frozen=True, slots=True)
+class CompletionReport:
+    verdict: str
+    issues: tuple[str, ...]
+    calculation_count: int
+    traced_calculation_count: int
+    audit_present: bool
+
+    def to_dict(self) -> dict[str, object]:
+        return asdict(self)
+
+
 def _unescape_pointer_token(token: str) -> str:
     return token.replace("~1", "/").replace("~0", "~")
 
@@ -229,4 +241,77 @@ def verify_conclusion(turns: Iterable[Any]) -> ConclusionVerificationReport:
         successful_ids,
         tuple(sorted(set(rejected_ids))),
         uncovered,
+    )
+
+
+def evaluate_completion(
+    turns: Iterable[Any],
+    verification: ConclusionVerificationReport,
+    *,
+    required_agents: Iterable[str] = (),
+    actual_agents: Iterable[str] = (),
+) -> CompletionReport:
+    """Convertit les contrôles techniques en verdict final non contournable."""
+
+    all_turns = tuple(turns)
+    calculations = tuple(
+        record for turn in all_turns for record in getattr(turn, "calculations", ())
+    )
+    issues: list[str] = []
+    audit_present = bool(all_turns and all_turns[-1].agent == "METRO-AUDIT")
+    if not audit_present:
+        issues.append("METRO-AUDIT est absent ou n'est pas le dernier rôle exécuté")
+
+    required = set(required_agents)
+    actual = set(actual_agents)
+    missing_critical = sorted(
+        required.intersection({"MODEL-COMPILER", "METRO-AUDIT"}) - actual
+    )
+    if missing_critical:
+        issues.append("rôles critiques omis: " + ", ".join(missing_critical))
+
+    traced = 0
+    invalid_trace = False
+    rejected = False
+    conditional = False
+    for record in calculations:
+        if record.status != "ok":
+            rejected = True
+            issues.append(
+                f"calcul {record.request.id} rejeté: {record.error_type or 'erreur'}"
+            )
+        if record.provenance_status == "conditional":
+            conditional = True
+        if record.trace is None:
+            invalid_trace = True
+            issues.append(f"calcul {record.request.id} sans trace canonique")
+            continue
+        try:
+            record.trace.verify()
+            traced += 1
+        except ValueError:
+            invalid_trace = True
+            issues.append(f"trace invalide pour le calcul {record.request.id}")
+
+    if verification.status == "failed":
+        issues.append("la conclusion diverge des résultats déterministes")
+    elif verification.status == "unverified":
+        issues.append("des calculs réussis ne sont pas couverts par METRO-AUDIT")
+
+    if rejected or invalid_trace or verification.status == "failed":
+        verdict = "NON VALIDE"
+    elif not audit_present or missing_critical or verification.status == "unverified":
+        verdict = "INCOMPLET"
+    elif verification.status == "verified":
+        verdict = "VALIDÉ SOUS CONDITIONS" if conditional else "VALIDÉ"
+    else:
+        verdict = "VALIDÉ SOUS CONDITIONS"
+        issues.append("aucun résultat numérique ne relève du vérificateur de claims")
+
+    return CompletionReport(
+        verdict,
+        tuple(dict.fromkeys(issues)),
+        len(calculations),
+        traced,
+        audit_present,
     )

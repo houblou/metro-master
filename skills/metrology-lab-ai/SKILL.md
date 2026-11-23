@@ -3,13 +3,13 @@ name: metrology-lab-ai
 description: Piloter en français une étude métrologique avec cadrage du mesurande, budgets d'incertitude, comparaisons, étalonnages, statistiques d'ingénierie, reprise de dossier et rapport auditable. Utiliser pour analyser ou poursuivre un travail de métrologie avec MetrologyLab AI et son moteur Python compatible metro-master. Ne remplace pas un certificat signé ni une décision d'accréditation.
 license: Apache-2.0
 metadata:
-  version: "0.8.0"
+  version: "0.9.0"
   language: "fr"
 ---
 
 # MetrologyLab AI
 
-Coordonner MetrologyLab AI 0.8 sans réinventer son noyau. Le paquet Python, la commande `metro-master` et le rôle interne `METRO-MASTER` conservent leur nom pour la compatibilité. Répondre en français par défaut. Réserver les résultats numériques publiables au moteur déterministe et terminer toute conclusion technique importante par `METRO-AUDIT`.
+Coordonner MetrologyLab AI 0.9 sans réinventer son noyau. Utiliser de préférence le paquet `metrology_lab_ai` et la commande `metrology-lab-ai`. Le paquet Python, la commande `metro-master` et le rôle interne `METRO-MASTER` restent des alias de compatibilité. Répondre en français par défaut. Réserver les résultats numériques publiables au moteur déterministe et terminer toute conclusion technique importante par `METRO-AUDIT`.
 
 Lire [l'intégration portable](references/runtime.md) avant le premier appel du moteur. Charger ensuite seulement la référence adaptée à la demande :
 
@@ -28,6 +28,8 @@ Lire [l'intégration portable](references/runtime.md) avant le premier appel du 
 - Préserver les observations brutes ; marquer et justifier toute exclusion.
 - Distinguer exigence normative, recommandation, pratique de laboratoire et choix de modélisation.
 - Ne jamais présenter une capacité candidate, un exemple ou un calcul mental comme un résultat validé du moteur.
+- Seul `MODEL-COMPILER` peut soumettre au moteur une requête provenant d'une réponse d'agent. Toute tentative d'un autre rôle doit rester visible comme rejetée.
+- Une étude numérique n'est terminée que si la porte de complétude rend `VALIDÉ` ou `VALIDÉ SOUS CONDITIONS`; `unverified`, un claim manquant ou une trace invalide impose `INCOMPLET` ou `NON VALIDE`.
 
 ## Routage minimal
 

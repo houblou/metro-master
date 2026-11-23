@@ -33,10 +33,10 @@ class StructuredBackend:
         self.audit_context = ""
 
     def complete(self, *, agent, system_prompt, user_request, shared_context):
-        if agent == "GUM-EXPERT":
+        if agent == "MODEL-COMPILER":
             return json.dumps(
                 {
-                    "message": "Budget proposé pour exécution déterministe.",
+                    "message": "Budget compilé depuis la demande.",
                     "calculation_requests": [
                         {
                             "id": "budget-1",
@@ -46,21 +46,82 @@ class StructuredBackend:
                                     {
                                         "name": "a",
                                         "standard_uncertainty": 3.0,
+                                        "sensitivity": 1.0,
+                                        "owner": "bench",
                                         "unit": "kPa",
+                                        "distribution": "unspecified",
+                                        "source": "user_request",
+                                        "degrees_of_freedom": None,
                                     },
                                     {
                                         "name": "b",
                                         "standard_uncertainty": 4.0,
+                                        "sensitivity": 1.0,
+                                        "owner": "reference",
                                         "unit": "kPa",
+                                        "distribution": "unspecified",
+                                        "source": "user_request",
+                                        "degrees_of_freedom": None,
                                     },
-                                ]
+                                ],
+                                "correlations": [],
+                                "coverage_factor": 2.0,
                             },
+                            "evidence": [
+                                {"field_path": "/components/0/standard_uncertainty", "source_ref": "user_request", "excerpt": "a = 3.0 kPa", "evidence_type": "provided"},
+                                {"field_path": "/components/1/standard_uncertainty", "source_ref": "user_request", "excerpt": "b = 4.0 kPa", "evidence_type": "provided"},
+                                {"field_path": "/components/0/sensitivity", "source_ref": "declared:method", "excerpt": "sensitivity 1.0", "evidence_type": "method_choice"},
+                                {"field_path": "/components/1/sensitivity", "source_ref": "declared:method", "excerpt": "sensitivity 1.0", "evidence_type": "method_choice"},
+                                {"field_path": "/components/0/unit", "source_ref": "user_request", "excerpt": "a = 3.0 kPa", "evidence_type": "provided"},
+                                {"field_path": "/components/1/unit", "source_ref": "user_request", "excerpt": "b = 4.0 kPa", "evidence_type": "provided"},
+                                {"field_path": "/coverage_factor", "source_ref": "declared:method", "excerpt": "coverage factor 2.0", "evidence_type": "method_choice"}
+                            ],
+                            "assumptions": [
+                                "Correlation coefficients are assumed zero.",
+                                "Sensitivity coefficients and coverage factor are declared method choices."
+                            ]
                         }
                     ],
                 }
             )
         if agent == "METRO-AUDIT":
             self.audit_context = shared_context
+            return json.dumps(
+                {
+                    "message": "Combined standard uncertainty is 5.0 kPa.",
+                    "conclusion_claims": [
+                        {
+                            "request_id": "budget-1",
+                            "result_pointer": "/combined_standard_uncertainty",
+                            "stated_value": 5.0,
+                            "unit": "kPa",
+                            "statement": "Combined standard uncertainty"
+                        }
+                    ]
+                }
+            )
+        return f"{agent}: ok"
+
+
+class UnauthorizedCalculationBackend:
+    def complete(self, *, agent, system_prompt, user_request, shared_context):
+        if agent == "GUM-EXPERT":
+            return json.dumps(
+                {
+                    "message": "Unauthorized direct calculation.",
+                    "calculation_requests": [
+                        {
+                            "id": "unauthorized-budget",
+                            "operation": "budget",
+                            "payload": {
+                                "components": [
+                                    {"name": "a", "standard_uncertainty": 1.0, "unit": "kPa"}
+                                ]
+                            }
+                        }
+                    ]
+                }
+            )
         return f"{agent}: ok"
 
 
@@ -205,12 +266,20 @@ class AgentsLibraryOrchestratorTests(unittest.TestCase):
 
     def test_structured_calculation_is_executed_and_passed_to_audit(self):
         backend = StructuredBackend()
-        result = MetroOrchestrator().execute("Calculer une incertitude", backend)
-        gum_turn = next(turn for turn in result.turns if turn.agent == "GUM-EXPERT")
-        self.assertEqual(len(gum_turn.calculations), 1)
-        record = gum_turn.calculations[0]
+        result = MetroOrchestrator().execute(
+            "Calculer une incertitude avec a = 3.0 kPa et b = 4.0 kPa",
+            backend,
+        )
+        compiler_turn = next(
+            turn for turn in result.turns if turn.agent == "MODEL-COMPILER"
+        )
+        self.assertEqual(len(compiler_turn.calculations), 1)
+        record = compiler_turn.calculations[0]
         self.assertEqual(record.status, "ok")
         self.assertAlmostEqual(record.result["combined_standard_uncertainty"], 5.0)
+        self.assertIsNotNone(record.trace)
+        record.trace.verify()
+        self.assertEqual(result.completion_report.verdict, "VALIDÉ SOUS CONDITIONS")
         audit_context = json.loads(backend.audit_context)
         calculations = [
             calculation
@@ -221,6 +290,18 @@ class AgentsLibraryOrchestratorTests(unittest.TestCase):
         self.assertAlmostEqual(
             calculations[0]["result"]["combined_standard_uncertainty"], 5.0
         )
+
+    def test_non_compiler_calculation_is_rejected_and_blocks_completion(self):
+        result = MetroOrchestrator().execute(
+            "Calculer une incertitude",
+            UnauthorizedCalculationBackend(),
+        )
+        gum_turn = next(turn for turn in result.turns if turn.agent == "GUM-EXPERT")
+        record = gum_turn.calculations[0]
+        self.assertEqual(record.status, "rejected")
+        self.assertEqual(record.error_type, "CalculationRoleViolation")
+        self.assertIsNotNone(record.trace)
+        self.assertEqual(result.completion_report.verdict, "NON VALIDE")
 
     def test_pdf_chunks_are_extracted_then_synthesized_before_audit(self):
         chunks = (

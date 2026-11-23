@@ -11,7 +11,7 @@ from .comparison import (
     separate_bench_uncertainty,
     zeta_score,
 )
-from .conclusion import ConclusionClaim, ConclusionVerificationReport
+from .conclusion import CompletionReport, ConclusionClaim, ConclusionVerificationReport
 from .execution import (
     CalculationRequest,
     DeterministicEngine,
@@ -27,6 +27,7 @@ from .research import (
     ResearchRequest,
     ResearchSource,
 )
+from .quantities import compatible_units, convert_standard_uncertainty, convert_value
 from .rag import (
     CallableEmbeddingProvider,
     HashingEmbeddingProvider,
@@ -34,11 +35,16 @@ from .rag import (
     VectorKnowledgeIndex,
 )
 from .study_history import StudyStore
+from .source_registry import SourceRegistry
 from .token_budget import TokenBudgetExceeded, TokenBudgetPolicy, estimate_tokens
+from .trace import CalculationTrace
 from .uncertainty import propagate_linear
+from .version import __version__
 
 __all__ = [
     "CalculationRequest",
+    "CalculationTrace",
+    "CompletionReport",
     "ConclusionClaim",
     "ConclusionVerificationReport",
     "DeterministicEngine",
@@ -52,6 +58,7 @@ __all__ = [
     "CallableResearchProvider",
     "ResearchRequest",
     "ResearchSource",
+    "SourceRegistry",
     "CallableEmbeddingProvider",
     "HashingEmbeddingProvider",
     "HybridRagRetriever",
@@ -62,6 +69,9 @@ __all__ = [
     "TokenBudgetPolicy",
     "UncertaintyComponent",
     "compare_results",
+    "compatible_units",
+    "convert_standard_uncertainty",
+    "convert_value",
     "normalized_error",
     "paired_statistics",
     "propagate_linear",
@@ -69,6 +79,4 @@ __all__ = [
     "zeta_score",
     "estimate_tokens",
 ]
-
-__version__ = "0.8.0"
 

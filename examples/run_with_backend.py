@@ -1,5 +1,7 @@
 """Exemple de branchement : remplacer DemoBackend par votre fournisseur autorisé."""
 
+import _bootstrap  # noqa: F401
+
 from metro_master.orchestrator import MetroOrchestrator
 
 

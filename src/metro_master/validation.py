@@ -5,6 +5,8 @@ from __future__ import annotations
 from math import isfinite
 from typing import Iterable, Protocol
 
+from .quantities import compatible_units, parse_unit
+
 
 class ScientificValidationError(ValueError):
     """Une entrée viole un invariant numérique ou métrologique."""
@@ -75,8 +77,8 @@ def validate_compatible_units(components: Iterable[ComponentWithUnit]) -> str:
     """Return the common unit or reject a budget the model cannot dimensionally prove.
 
     The current first-order model stores scalar sensitivities without sensitivity
-    units. It can therefore combine components only when their declared uncertainty
-    units are identical, or when every unit is deliberately left unspecified.
+    units. Components may use different scales of the same dimension; propagation
+    normalizes them to the first declared unit.
     """
 
     items = list(components)
@@ -89,14 +91,17 @@ def validate_compatible_units(components: Iterable[ComponentWithUnit]) -> str:
         raise ScientificValidationError(
             "all uncertainty components must declare the common unit or all leave it unspecified"
         )
-    if len(unique) > 1:
+    for unit in unique:
+        parse_unit(unit)
+    common = declared[0] if declared else ""
+    if any(not compatible_units(common, unit) for unit in unique):
         details = ", ".join(
             f"{component.name}={component.unit!r}" for component in items
         )
         raise ScientificValidationError(
             f"incompatible uncertainty component units: {details}"
         )
-    return next(iter(unique), "")
+    return common
 
 
 def validate_covariance_bound(

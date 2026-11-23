@@ -2,7 +2,7 @@
 
 MetrologyLab AI est un projet hybride ChatGPT + Python, distribué sous licence Apache-2.0, pour traiter des problèmes de métrologie avec une équipe de treize agents spécialisés, un RAG vectoriel gouverné, une recherche Internet traçable, un registre d'études persistant et un noyau de calcul déterministe extensible. Sa priorité est la caractérisation d'un banc par comparaison : il conserve séparément l'incertitude du banc, celle de la référence, les effets partagés/corrélés et l'incertitude propre au protocole de comparaison.
 
-Depuis la version 0.8.0, le projet et le skill portent le nom **MetrologyLab AI**. Le paquet Python `metro-master`, le module `metro_master`, la commande `metro-master` et le rôle interne `METRO-MASTER` restent disponibles afin de ne pas casser les intégrations existantes.
+Depuis la version 0.9.0, le nom public est cohérent de bout en bout : projet et skill **MetrologyLab AI**, paquet importable `metrology_lab_ai` et commande `metrology-lab-ai`. La distribution, le module et la commande historiques `metro-master` / `metro_master`, ainsi que le rôle interne `METRO-MASTER`, restent disponibles afin de ne pas casser les intégrations existantes.
 
 Le projet ne contient le texte intégral d'aucune norme ISO ni d'aucun article payant. Le catalogue documentaire fourni est un index de métadonnées et de liens officiels vérifiés le 5 novembre 2026. Un agent ne peut citer une exigence ou un numéro de clause que si le texte ou l'extrait correspondant lui a effectivement été fourni.
 
@@ -13,14 +13,15 @@ Le projet ne contient le texte intégral d'aucune norme ISO ni d'aucun article p
 - un contrat scientifique commun et des instructions spécialisées composables en prompts complets ;
 - un prompt maître Markdown directement modifiable et trois profils de budget de tokens ;
 - un catalogue documentaire structuré JCGM/BIPM, ISO, ILAC, EA et EURAMET ;
-- propagation linéaire avec matrice de corrélation, contributions de covariance, incertitude élargie et degrés de liberté effectifs dans le cas indépendant ;
+- propagation linéaire avec matrice de corrélation, contributions de covariance, incertitude élargie et Welch–Satterthwaite lorsque les composantes à degrés de liberté finis restent indépendantes ;
 - calcul d'écart corrélé, score zêta, erreur normalisée, statistiques de paires et séparation conditionnelle de la variance du banc ;
 - un orchestrateur Python indépendant du fournisseur de modèle ;
 - un contrat `ResearchProvider` pour mener jusqu'à trois passes Web, filtrer les domaines et privilégier les sources officielles/primaires ;
 - une mémoire `KnowledgeStore` intègre où sources Web, lots PDF et inférences restent candidates jusqu'à validation humaine ;
 - un RAG hybride avec index vectoriel persistant, filtré sur les seules connaissances validées ;
 - `MODEL-COMPILER`, qui transforme un texte libre en requête de calcul seulement si chaque nombre possède une preuve vérifiable ;
-- un contrôle automatique des valeurs et unités reprises dans la conclusion finale ;
+- un contrôle automatique des valeurs et unités reprises dans la conclusion finale, suivi d'une porte de complétude déterministe ;
+- une trace canonique de chaque calcul réussi ou rejeté : preuves, hypothèses, module, version, empreintes, environnement et résultat ;
 - un `StudyStore` append-only dont les révisions forment une chaîne SHA-256 ;
 - des exports en rapport technique, projet de certificat non officiel et aide à la revue d'accréditation ;
 - un contrat JSON optionnel qui relie les demandes des agents au moteur puis transmet les résultats déterministes à l'auditeur ;
@@ -34,8 +35,10 @@ cd metrology-lab-ai
 py -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install -e .
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests -t . -v
 ```
+
+Depuis un checkout, les tests peuvent aussi être lancés sans installation ni `PYTHONPATH` avec `python -m unittest discover -s tests -t . -v`.
 
 Le projet n'a aucune dépendance d'exécution externe. Python 3.11 ou plus récent suffit.
 
@@ -70,7 +73,8 @@ Les ajouts de la v0.7 comprennent :
 Afficher la version réellement installée :
 
 ```powershell
-metro-master --version
+metrology-lab-ai --version
+# alias historique : metro-master --version
 ```
 
 Les évolutions sont recensées dans [CHANGELOG.md](CHANGELOG.md).
@@ -80,21 +84,21 @@ Les évolutions sont recensées dans [CHANGELOG.md](CHANGELOG.md).
 Lister les agents et construire un prompt complet prêt à copier dans les instructions d'un GPT :
 
 ```powershell
-metro-master agents
-metro-master prompt METRO-COMPARE
+metrology-lab-ai agents
+metrology-lab-ai prompt METRO-COMPARE
 ```
 
 Voir le plan d'orchestration sans appeler de modèle :
 
 ```powershell
-metro-master route "Caractériser un banc de pression par comparaison avec une référence corrélée"
+metrology-lab-ai route "Caractériser un banc de pression par comparaison avec une référence corrélée"
 ```
 
 Prévisualiser le même travail avec une limite de tokens :
 
 ```powershell
-metro-master token-plan "Caractériser un banc de pression par comparaison" --mode eco
-metro-master token-plan "Caractériser un banc de pression par comparaison" --mode standard
+metrology-lab-ai token-plan "Caractériser un banc de pression par comparaison" --mode eco
+metrology-lab-ai token-plan "Caractériser un banc de pression par comparaison" --mode standard
 ```
 
 Le prompt maître éditable est `src/metro_master/resources/prompts/metro-master.md`. Les plafonds sont définis dans `src/metro_master/resources/token-budget.json`. Les modes `eco`, `standard` et `deep` limitent le total estimé, la taille de chaque appel, le nombre de rôles et conservent une réserve dédiée à `METRO-AUDIT`. Voir [la documentation de gestion des tokens](docs/token-management.md).
@@ -102,11 +106,13 @@ Le prompt maître éditable est `src/metro_master/resources/prompts/metro-master
 Calculer un budget corrélé et une comparaison :
 
 ```powershell
-metro-master budget examples\budget_correlated.json
-metro-master compare examples\comparison_correlated.json
-metro-master paired examples\paired_comparison.json
-metro-master separate examples\separation_conditional.json
+metrology-lab-ai budget examples\budget_correlated.json --trace-out traces\budget.json
+metrology-lab-ai compare examples\comparison_correlated.json
+metrology-lab-ai paired examples\paired_comparison.json
+metrology-lab-ai separate examples\separation_conditional.json
 ```
+
+Les commandes de calcul rendent toujours l'enveloppe complète `CalculationRecord`, y compris la trace. `--trace-out` écrit séparément cette trace et refuse d'écraser un fichier existant.
 
 Interroger le catalogue :
 

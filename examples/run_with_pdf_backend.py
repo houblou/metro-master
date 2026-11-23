@@ -5,6 +5,8 @@ from __future__ import annotations
 import argparse
 import json
 
+import _bootstrap  # noqa: F401
+
 from metro_master.orchestrator import MetroOrchestrator
 from metro_master.pdf_library import GovernedPdfLibrary
 

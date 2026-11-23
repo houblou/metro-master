@@ -60,7 +60,10 @@ flowchart LR
     T[MODEL-COMPILER] --> E
     Q --> F[ConclusionVerifier]
     E --> F
-    F --> Y[StudyStore append-only]
+    F --> P2[CompletionGate]
+    E --> T2[CalculationTrace canonique]
+    T2 --> P2
+    P2 --> Y[StudyStore append-only]
     Y --> O[Rapport + projet de certificat + aide à la revue]
 ```
 
@@ -83,6 +86,8 @@ Les agents ne s'appellent pas directement. L'orchestrateur est l'unique médiate
 | HybridRagRetriever | fusionner similarité cosinus et pertinence lexicale | valider la vérité d'un fragment retrouvé |
 | MODEL-COMPILER | proposer un payload avec preuve par champ critique | inventer une valeur manquante ou choisir silencieusement une hypothèse |
 | ConclusionVerifier | comparer claims structurés, valeurs et unités au moteur | certifier la cohérence sémantique complète d'une conclusion |
+| CompletionGate | convertir audit, claims, refus, traces et rôles omis en verdict final | présenter `unverified` comme un succès |
+| CalculationTrace | lier requête, preuves, module, environnement, résultat et empreintes | prouver à elle seule la vérité scientifique des entrées |
 | StudyStore | révisions immuables et chaîne d'empreintes | écraser une étude ou fournir une signature d'identité |
 | Reporting | rapport technique et projets préparatoires explicitement non officiels | signer un certificat ou décider d'une accréditation |
 | MODULE-BUILDER | proposer un manifeste déclaratif candidat | promouvoir, activer ou exécuter du Python |
@@ -99,13 +104,14 @@ Les agents ne s'appellent pas directement. L'orchestrateur est l'unique médiate
 4. Pour une recherche Internet, `WEB-RESEARCHER` émet des `research_requests`. L'orchestrateur contrôle leur nombre, déduplique les requêtes, appelle le fournisseur injecté, filtre domaines et types de source, puis exécute une passe d'affinage avant la synthèse.
 5. Les sources Web, lots PDF et synthèses sont mémorisés comme candidats. Après promotion, l'index vectoriel persistant est rafraîchi et le RAG hybride injecte au plus cinq résultats validés.
 6. Pour un calcul en texte libre, `MODEL-COMPILER` produit une requête et une preuve par nombre, booléen et unité critique. La présence de l'extrait dans une source admise et la valeur sont vérifiées avant calcul.
-7. Un agent peut rendre une enveloppe JSON avec des `calculation_requests`. L'orchestrateur la parse et appelle l'interface unique `DeterministicEngine`.
+7. Seul `MODEL-COMPILER` peut rendre une enveloppe agent avec des `calculation_requests`. Toute tentative d'un autre rôle est enregistrée comme `CalculationRoleViolation` et bloque la complétude.
 8. Le moteur rejette les valeurs non finies, unités de composantes incompatibles, corrélations sans justification, matrices invalides, covariances physiquement impossibles, variances négatives et séparations non justifiées.
-9. Chaque résultat ou refus est enregistré avec la demande qui l'a produit, puis transmis aux agents suivants.
+9. Chaque résultat ou refus est enregistré avec une trace canonique contenant demande, preuves, module, version, empreinte d'implémentation, environnement et résultat, puis transmis aux agents suivants.
 10. Si une capacité manque, `MODULE-BUILDER` peut soumettre un manifeste candidat. Le candidat reste absent du moteur jusqu'aux tests et à la promotion humaine.
 11. `METRO-AUDIT`, imposé en dernière étape, rend des claims structurés pour les résultats numériques repris dans sa conclusion.
 12. `ConclusionVerifier` compare automatiquement identifiant, pointeur, valeur et unité aux résultats du moteur.
-13. Si un `StudyStore` est configuré, le résultat complet devient une nouvelle révision chaînée. Les exports sont générés depuis cette révision persistée.
+13. `CompletionGate` rend `VALIDÉ`, `VALIDÉ SOUS CONDITIONS`, `INCOMPLET` ou `NON VALIDE`. Un claim absent, une trace invalide ou un rôle critique omis ne peut pas devenir un succès silencieux.
+14. Si un `StudyStore` est configuré, le résultat complet devient une nouvelle révision chaînée. La première trace d'une nouvelle révision référence la dernière trace de la révision précédente. Les exports sont générés depuis cette révision persistée.
 
 ## 5. Contrats d'API internes
 
@@ -163,7 +169,7 @@ Une `CalculationRequest` compilée porte des `InputEvidence`. Toute feuille num�
 
 ### Moteur déterministe
 
-`DeterministicEngine.calculate(CalculationRequest)` est l'interface commune à la CLI et à l'orchestrateur. `execute()` transforme une erreur de validation en enregistrement `rejected` pour que l'audit puisse l'examiner sans faire disparaître la tentative.
+`DeterministicEngine.execute(CalculationRequest)` est l'interface traçable commune à la CLI et à l'orchestrateur. `calculate()` reste l'appel numérique interne. `execute()` transforme une erreur de validation en enregistrement `rejected` pour que l'audit puisse l'examiner sans faire disparaître la tentative.
 
 ### Budget
 

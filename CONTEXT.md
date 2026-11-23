@@ -2,7 +2,7 @@
 
 ## Étude métrologique
 
-Ensemble cohérent formé par la décision attendue, le mesurande, les données, les hypothèses, les sources, les calculs et les réserves. Une étude n'est pas encore persistée comme objet autonome dans la version 0.2.0.
+Ensemble cohérent formé par la décision attendue, le mesurande, les données, les hypothèses, les sources, les calculs et les réserves. Depuis la version 0.6.0, `StudyStore` persiste l'étude sous forme de révisions append-only reliées par une chaîne d'intégrité SHA-256.
 
 ## Sortie d'agent
 
@@ -74,11 +74,19 @@ Application centralisée des invariants numériques et scientifiques que le mod�
 
 ## Enregistrement déterministe
 
-Trace associant une demande de calcul à un statut `ok` ou `rejected`. Un résultat `ok` confirme l'arithmétique des entrées enregistrées ; il ne valide pas le modèle, la provenance ni l'applicabilité.
+Trace canonique associant une demande de calcul à un statut `ok` ou `rejected`, au module et à sa version, aux empreintes d'implémentation et de validation, aux preuves, hypothèses, versions d'exécution et au résultat. Un résultat `ok` confirme l'arithmétique des entrées enregistrées ; il ne valide pas le modèle, la provenance ni l'applicabilité.
 
 ## Audit final
 
 Dernier rôle obligatoire d'un plan marqué `mandatory_final_audit`. Il confronte les sorties d'agents aux enregistrements déterministes et rend visibles les refus, divergences et limites.
+
+## Porte de complétude
+
+Contrôle déterministe exécuté après `METRO-AUDIT`. Il transforme claims, refus, traces et rôles omis en verdict `VALIDÉ`, `VALIDÉ SOUS CONDITIONS`, `INCOMPLET` ou `NON VALIDE`. Un calcul réussi mais non repris par un claim ne peut plus terminer comme succès silencieux.
+
+## Noms publics et historiques
+
+Le projet, le skill, la commande et le paquet publics sont `MetrologyLab AI`, `$metrology-lab-ai`, `metrology-lab-ai` et `metrology_lab_ai`. Les noms `metro-master`, `metro_master` et le rôle `METRO-MASTER` sont maintenus comme alias historiques afin de ne pas casser les intégrations existantes.
 
 ## Propriétaire de composante
 

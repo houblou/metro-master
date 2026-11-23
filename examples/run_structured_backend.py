@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 
+import _bootstrap  # noqa: F401
+
 from metro_master.orchestrator import MetroOrchestrator
 
 
@@ -16,7 +18,7 @@ class StructuredDemoBackend:
         user_request: str,
         shared_context: str,
     ) -> str:
-        if agent == "GUM-EXPERT":
+        if agent == "MODEL-COMPILER":
             return json.dumps(
                 {
                     "message": "Démonstration : budget transmis au moteur local.",
@@ -30,19 +32,39 @@ class StructuredDemoBackend:
                                     {
                                         "name": "bench",
                                         "standard_uncertainty": 3.0,
+                                        "sensitivity": 1.0,
                                         "owner": "bench",
                                         "unit": "kPa",
+                                        "distribution": "unspecified",
                                         "source": "illustrative example only",
+                                        "degrees_of_freedom": None,
                                     },
                                     {
                                         "name": "reference",
                                         "standard_uncertainty": 4.0,
+                                        "sensitivity": 1.0,
                                         "owner": "reference",
                                         "unit": "kPa",
+                                        "distribution": "unspecified",
                                         "source": "illustrative example only",
+                                        "degrees_of_freedom": None,
                                     },
                                 ],
+                                "correlations": [],
                             },
+                            "evidence": [
+                                {"field_path": "/components/0/standard_uncertainty", "source_ref": "user_request", "excerpt": "banc = 3.0 kPa", "evidence_type": "provided"},
+                                {"field_path": "/components/1/standard_uncertainty", "source_ref": "user_request", "excerpt": "référence = 4.0 kPa", "evidence_type": "provided"},
+                                {"field_path": "/components/0/sensitivity", "source_ref": "declared:method", "excerpt": "sensibilité 1.0", "evidence_type": "method_choice"},
+                                {"field_path": "/components/1/sensitivity", "source_ref": "declared:method", "excerpt": "sensibilité 1.0", "evidence_type": "method_choice"},
+                                {"field_path": "/components/0/unit", "source_ref": "user_request", "excerpt": "banc = 3.0 kPa", "evidence_type": "provided"},
+                                {"field_path": "/components/1/unit", "source_ref": "user_request", "excerpt": "référence = 4.0 kPa", "evidence_type": "provided"},
+                                {"field_path": "/coverage_factor", "source_ref": "user_request", "excerpt": "k = 2.0", "evidence_type": "provided"}
+                            ],
+                            "assumptions": [
+                                "Les corrélations sont supposées nulles.",
+                                "Les sensibilités unitaires sont des choix méthodologiques."
+                            ]
                         }
                     ],
                 },
@@ -55,13 +77,27 @@ class StructuredDemoBackend:
                 for turn in context["turns"]
                 for calculation in turn["deterministic_calculations"]
             ]
-            return f"DÉMONSTRATION — audit reçu {len(records)} calcul déterministe."
+            return json.dumps(
+                {
+                    "message": f"DÉMONSTRATION — audit reçu {len(records)} calcul déterministe ; incertitude-type composée 5.0 kPa.",
+                    "conclusion_claims": [
+                        {
+                            "request_id": "demo-budget",
+                            "result_pointer": "/combined_standard_uncertainty",
+                            "stated_value": 5.0,
+                            "unit": "kPa",
+                            "statement": "Incertitude-type composée"
+                        }
+                    ]
+                },
+                ensure_ascii=False,
+            )
         return f"DÉMONSTRATION — {agent} n'émet aucun calcul."
 
 
 if __name__ == "__main__":
     result = MetroOrchestrator().execute(
-        "Calculer un budget d'incertitude illustratif.",
+        "Calculer le budget illustratif : banc = 3.0 kPa, référence = 4.0 kPa, k = 2.0.",
         StructuredDemoBackend(),
     )
     print(json.dumps(result.to_dict(), ensure_ascii=False, indent=2))

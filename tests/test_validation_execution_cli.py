@@ -1,5 +1,6 @@
 import contextlib
 import io
+import json
 import math
 import unittest
 from unittest import mock
@@ -121,12 +122,16 @@ class ExecutionAndCliTests(unittest.TestCase):
             "reference_expanded_uncertainty": 0.0,
         }
         stderr = io.StringIO()
+        stdout = io.StringIO()
         with mock.patch("metro_master.cli._load_json", return_value=payload):
-            with contextlib.redirect_stderr(stderr):
+            with contextlib.redirect_stderr(stderr), contextlib.redirect_stdout(stdout):
                 exit_code = main(["compare", "unused.json"])
         self.assertEqual(exit_code, 2)
         self.assertIn("zero denominator", stderr.getvalue())
         self.assertNotIn("Traceback", stderr.getvalue())
+        envelope = json.loads(stdout.getvalue())
+        self.assertEqual(envelope["status"], "rejected")
+        self.assertTrue(envelope["trace"]["trace_sha256"])
 
 
 if __name__ == "__main__":

@@ -40,9 +40,25 @@ def _dump(value: object) -> None:
     print(json.dumps(value, ensure_ascii=False, indent=2))
 
 
-def _parser() -> argparse.ArgumentParser:
+def _write_trace(path: str | None, record: object) -> None:
+    if path is None:
+        return
+    trace = getattr(record, "trace", None)
+    if trace is None:
+        raise ValueError("calculation record has no trace")
+    destination = Path(path)
+    if destination.exists():
+        raise FileExistsError(f"trace output already exists: {destination}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(
+        json.dumps(trace.to_dict(), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+def _parser(prog: str = "metro-master") -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="metro-master",
+        prog=prog,
         description="MetrologyLab AI — métrologie multi-agents et calculs vérifiables",
     )
     parser.add_argument(
@@ -99,17 +115,21 @@ def _parser() -> argparse.ArgumentParser:
 
     budget = sub.add_parser("budget", help="calculer un budget JSON")
     budget.add_argument("input")
+    budget.add_argument("--trace-out")
 
     compare = sub.add_parser("compare", help="calculer un écart corrélé JSON")
     compare.add_argument("input")
+    compare.add_argument("--trace-out")
 
     paired = sub.add_parser("paired", help="analyser des lectures appariées JSON")
     paired.add_argument("input")
+    paired.add_argument("--trace-out")
 
     separate = sub.add_parser(
         "separate", help="séparer conditionnellement l'incertitude du banc"
     )
     separate.add_argument("input")
+    separate.add_argument("--trace-out")
 
     module_list = sub.add_parser(
         "module-list", help="lister les modules natifs et les modules gouvernés"
@@ -161,6 +181,7 @@ def _parser() -> argparse.ArgumentParser:
     module_run.add_argument("module_id")
     module_run.add_argument("input")
     module_run.add_argument("--root", default="modules/registry")
+    module_run.add_argument("--trace-out")
 
     knowledge_list = sub.add_parser(
         "knowledge-list", help="lister la mémoire locale gouvernée"
@@ -221,9 +242,9 @@ def _parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: list[str] | None = None, *, prog: str = "metro-master") -> int:
     _configure_utf8_streams()
-    args = _parser().parse_args(argv)
+    args = _parser(prog).parse_args(argv)
     engine = DeterministicEngine()
     try:
         if args.command == "agents":
@@ -272,7 +293,12 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command in {"budget", "compare", "paired", "separate"}:
             payload = _load_json(args.input)
             request = CalculationRequest("cli", args.command, payload)
-            _dump(engine.calculate(request))
+            record = engine.execute(request, execution_origin="cli:structured_input")
+            _write_trace(args.trace_out, record)
+            _dump(record.to_dict())
+            if record.status != "ok":
+                print(f"error: {record.error}", file=sys.stderr)
+                return 2
         elif args.command == "module-list":
             store = ModuleStore(args.root, reserved_ids=BUILTIN_OPERATIONS)
             governed = [record.to_dict() for record in store.list_records()]
@@ -327,7 +353,14 @@ def main(argv: list[str] | None = None) -> int:
             request = CalculationRequest(
                 "cli-module", args.module_id, _load_json(args.input)
             )
-            _dump(active_engine.calculate(request))
+            record = active_engine.execute(
+                request, execution_origin="cli:structured_input"
+            )
+            _write_trace(args.trace_out, record)
+            _dump(record.to_dict())
+            if record.status != "ok":
+                print(f"error: {record.error}", file=sys.stderr)
+                return 2
         elif args.command == "knowledge-list":
             store = KnowledgeStore(args.root)
             _dump([record.to_dict() for record in store.list_records()])
@@ -413,4 +446,8 @@ def main(argv: list[str] | None = None) -> int:
     ) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
+
+
+def public_main(argv: list[str] | None = None) -> int:
+    return main(argv, prog="metrology-lab-ai")
 

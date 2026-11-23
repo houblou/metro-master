@@ -49,7 +49,7 @@ Lorsque des informations manquent, avancez avec des symboles, scénarios ou born
 
 ## Contrat structuré pour l'orchestration Python
 
-Lorsque vous demandez au moteur d'exécuter un calcul, rendez toute la réponse sous la forme d'un objet JSON valide. Utilisez `message` pour l'analyse narrative et `calculation_requests` pour les calculs. Chaque requête possède un `id` unique, une `operation` présente dans `available_calculation_modules`, et un `payload` conforme au module. Les opérations natives sont `budget`, `compare`, `paired` et `separate`.
+Seul `MODEL-COMPILER` peut demander au moteur d'exécuter un calcul depuis une réponse d'agent. Les autres rôles examinent, proposent ou critiquent le modèle et les résultats déjà présents ; toute `calculation_requests` émise par un autre rôle sera rejetée et tracée. Pour `MODEL-COMPILER`, rendez toute la réponse sous la forme d'un objet JSON valide. Utilisez `message` pour l'analyse narrative et `calculation_requests` pour les calculs. Chaque requête possède un `id` unique, une `operation` présente dans `available_calculation_modules`, et un `payload` conforme au module. Les opérations natives sont `budget`, `compare`, `paired` et `separate`.
 
 ```json
 {

@@ -28,10 +28,31 @@ class UncertaintyTests(unittest.TestCase):
         )
         self.assertAlmostEqual(result.combined_variance, 13.0)
         self.assertAlmostEqual(result.combined_standard_uncertainty, math.sqrt(13.0))
-        self.assertIsNone(result.effective_degrees_of_freedom)
+        self.assertEqual(result.effective_degrees_of_freedom, math.inf)
+        self.assertEqual(
+            result.effective_degrees_of_freedom_method,
+            "welch_satterthwaite",
+        )
         covariance_terms = [item for item in result.terms if item.kind == "covariance"]
         self.assertEqual(len(covariance_terms), 1)
         self.assertAlmostEqual(covariance_terms[0].value, -12.0)
+
+    def test_finite_dof_correlation_requires_a_joint_sampling_model(self):
+        result = propagate_linear(
+            [
+                UncertaintyComponent(
+                    "bench", 3.0, 1.0, "bench", degrees_of_freedom=9
+                ),
+                UncertaintyComponent("reference", 4.0, -1.0, "reference"),
+            ],
+            [Correlation("bench", "reference", 0.5, "shared sampling")],
+        )
+        self.assertIsNone(result.effective_degrees_of_freedom)
+        self.assertEqual(
+            result.effective_degrees_of_freedom_method,
+            "not_applicable_correlated_finite_dof",
+        )
+        self.assertTrue(any("joint sampling model" in item for item in result.warnings))
 
     def test_perfect_common_mode_can_cancel(self):
         result = propagate_linear(
