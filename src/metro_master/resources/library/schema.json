@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "METRO-MASTER document catalog",
+  "title": "MetrologyLab AI document catalog",
   "type": "object",
   "required": ["catalog_version", "verified_at", "documents"],
   "properties": {

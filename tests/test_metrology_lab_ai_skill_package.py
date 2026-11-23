@@ -11,14 +11,14 @@ from metro_master import __version__
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / "skills" / "metro-master"
+SKILL = ROOT / "skills" / "metrology-lab-ai"
 
 
-class MetroMasterSkillPackageTests(unittest.TestCase):
-    def test_plugin_manifest_targets_v071_skill(self) -> None:
+class MetrologyLabAiSkillPackageTests(unittest.TestCase):
+    def test_plugin_manifest_targets_v080_skill(self) -> None:
         manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
-        self.assertEqual(manifest["name"], "metro-master")
-        self.assertEqual(manifest["version"], "0.7.1")
+        self.assertEqual(manifest["name"], "metrology-lab-ai")
+        self.assertEqual(manifest["version"], "0.8.0")
         self.assertEqual(manifest["license"], "Apache-2.0")
         self.assertEqual(manifest["skills"], "./skills/")
 
@@ -26,7 +26,7 @@ class MetroMasterSkillPackageTests(unittest.TestCase):
         project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
         manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
         skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-        expected = "0.7.1"
+        expected = "0.8.0"
         self.assertEqual(project["project"]["version"], expected)
         self.assertEqual(manifest["version"], expected)
         self.assertEqual(__version__, expected)
@@ -34,8 +34,8 @@ class MetroMasterSkillPackageTests(unittest.TestCase):
 
     def test_skill_is_portable_and_routes_to_progressive_references(self) -> None:
         skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("name: metro-master", skill_text)
-        self.assertIn('version: "0.7.1"', skill_text)
+        self.assertIn("name: metrology-lab-ai", skill_text)
+        self.assertIn('version: "0.8.0"', skill_text)
         self.assertIn("references/statistiques-nist-fr.md", skill_text)
         self.assertIn("references/rapport-metrologique-fr.md", skill_text)
         self.assertIn("references/runtime.md", skill_text)
@@ -49,8 +49,8 @@ class MetroMasterSkillPackageTests(unittest.TestCase):
 
     def test_openai_metadata_invokes_the_installed_skill(self) -> None:
         metadata = (SKILL / "agents" / "openai.yaml").read_text(encoding="utf-8")
-        self.assertIn("display_name: \"METRO-MASTER\"", metadata)
-        self.assertIn("$metro-master", metadata)
+        self.assertIn("display_name: \"MetrologyLab AI\"", metadata)
+        self.assertIn("$metrology-lab-ai", metadata)
         self.assertIn("allow_implicit_invocation: true", metadata)
 
     def test_statistical_reference_retains_provenance_and_guards(self) -> None:
@@ -68,7 +68,7 @@ class MetroMasterSkillPackageTests(unittest.TestCase):
         self.assertIn("Aucun texte, code, gabarit", reference)
         self.assertIn("Principe de reprise consciente de l'état", reference)
 
-    def test_portable_bridge_reaches_the_v071_engine(self) -> None:
+    def test_portable_bridge_reaches_the_v080_engine(self) -> None:
         process = subprocess.run(
             [
                 sys.executable,
@@ -88,6 +88,12 @@ class MetroMasterSkillPackageTests(unittest.TestCase):
         names = {agent["name"] for agent in agents}
         self.assertIn("METRO-MASTER", names)
         self.assertIn("METRO-AUDIT", names)
+
+    def test_legacy_python_and_cli_names_remain_compatible(self) -> None:
+        project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+        self.assertEqual(project["project"]["name"], "metro-master")
+        self.assertIn("metro-master", project["project"]["scripts"])
+        self.assertTrue((ROOT / "src" / "metro_master").is_dir())
 
 
 if __name__ == "__main__":

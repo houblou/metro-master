@@ -1,4 +1,4 @@
-# Intégration portable METRO-MASTER
+# Intégration portable MetrologyLab AI
 
 ## Découverte du moteur
 
@@ -21,11 +21,11 @@ py -m venv .venv
 .venv\Scripts\python.exe -m unittest discover -s tests -q
 ```
 
-Version de projet attendue : `0.7.1`. Une compétence améliorée n'autorise pas à annoncer une version logicielle supérieure sans mise à jour cohérente du paquet, des tests et de la documentation.
+Version de projet attendue : `0.8.0`. Le paquet Python et la commande restent nommés `metro-master` pour la compatibilité. Une compétence améliorée n'autorise pas à annoncer une version logicielle supérieure sans mise à jour cohérente du paquet, des tests et de la documentation.
 
 ## Appels utiles
 
-Depuis le dossier `skills/metro-master` :
+Depuis le dossier `skills/metrology-lab-ai` :
 
 ```powershell
 py scripts\run_metro_master.py agents

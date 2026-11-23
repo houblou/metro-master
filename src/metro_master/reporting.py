@@ -64,7 +64,7 @@ def _header(snapshot: StudySnapshot, title: str) -> list[str]:
 
 
 def render_technical_report(snapshot: StudySnapshot) -> str:
-    lines = _header(snapshot, "Rapport technique METRO-MASTER")
+    lines = _header(snapshot, "Rapport technique MetrologyLab AI")
     lines.extend(["## Demande", "", snapshot.request, "", "## Exécutions", ""])
     calculations = _calculations(snapshot)
     if not calculations:

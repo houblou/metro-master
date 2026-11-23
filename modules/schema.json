@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://example.invalid/metro-master/formula-module.schema.json",
-  "title": "METRO-MASTER declarative formula module",
+  "title": "MetrologyLab AI declarative formula module",
   "type": "object",
   "additionalProperties": false,
   "required": [

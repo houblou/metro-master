@@ -1,4 +1,4 @@
-"""Budgets de tokens conservateurs pour l'orchestration METRO-MASTER.
+"""Budgets de tokens conservateurs pour l'orchestration MetrologyLab AI.
 
 Les valeurs sont des estimations independantes du fournisseur. Un adaptateur LLM
 peut appliquer la limite de sortie exacte en acceptant ``max_output_tokens`` dans

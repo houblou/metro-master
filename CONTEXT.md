@@ -1,4 +1,4 @@
-# Langage du domaine METRO-MASTER
+# Langage du domaine MetrologyLab AI
 
 ## Étude métrologique
 

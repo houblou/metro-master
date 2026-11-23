@@ -1,4 +1,7 @@
-"""METRO-MASTER: métrologie multi-agents et calculs vérifiables."""
+"""MetrologyLab AI: métrologie multi-agents et calculs vérifiables.
+
+Le nom de paquet ``metro_master`` reste stable pour la compatibilité.
+"""
 
 from .comparison import (
     IdentifiabilityError,
@@ -67,5 +70,5 @@ __all__ = [
     "estimate_tokens",
 ]
 
-__version__ = "0.7.1"
+__version__ = "0.8.0"
 

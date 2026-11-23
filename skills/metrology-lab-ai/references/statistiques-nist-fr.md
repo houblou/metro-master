@@ -2,7 +2,7 @@
 
 ## Provenance et statut
 
-Cette référence est une adaptation française orientée METRO-MASTER des concepts du **NIST/SEMATECH e-Handbook of Statistical Methods, NIST Handbook 151**. Le paquet consulté indique que le contenu NIST est une œuvre du gouvernement des États-Unis dans le domaine public américain. Cette adaptation n'est pas une publication du NIST ou de SEMATECH et n'est approuvée par aucun de ces organismes.
+Cette référence est une adaptation française orientée MetrologyLab AI des concepts du **NIST/SEMATECH e-Handbook of Statistical Methods, NIST Handbook 151**. Le paquet consulté indique que le contenu NIST est une œuvre du gouvernement des États-Unis dans le domaine public américain. Cette adaptation n'est pas une publication du NIST ou de SEMATECH et n'est approuvée par aucun de ces organismes.
 
 Source consultée le 22 novembre 2026 :
 
@@ -146,11 +146,11 @@ Le nombre de défaillances, le mécanisme de censure et la justification physiqu
 
 Ne pas appliquer automatiquement une loi de Weibull, lognormale ou exponentielle. Comparer diagnostics, mécanisme et sensibilité de la décision.
 
-## Garde-fous METRO-MASTER
+## Garde-fous MetrologyLab AI
 
 - Les méthodes ci-dessus ne deviennent pas des calculs autorisés par leur seule présence dans cette référence.
 - Utiliser le moteur pour les modules actifs. Sinon produire un plan, un schéma d'entrée et une proposition candidate.
-- Pour GUM, conserver les règles plus strictes de METRO-MASTER sur les corrélations, les unités et le facteur d'élargissement.
+- Pour GUM, conserver les règles plus strictes de MetrologyLab AI sur les corrélations, les unités et le facteur d'élargissement.
 - Une carte stable ne prouve pas la conformité ; un indice de capabilité ne prouve pas la stabilité ; une différence significative ne prouve pas l'importance pratique.
 - Citer la source officielle si une formule ou une condition précise soutient la conclusion.
 

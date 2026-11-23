@@ -1,6 +1,8 @@
-# METRO-MASTER
+# MetrologyLab AI
 
-METRO-MASTER est un projet hybride ChatGPT + Python, distribué sous licence Apache-2.0, pour traiter des problèmes de métrologie avec une équipe de treize agents spécialisés, un RAG vectoriel gouverné, une recherche Internet traçable, un registre d'études persistant et un noyau de calcul déterministe extensible. Sa priorité est la caractérisation d'un banc par comparaison : il conserve séparément l'incertitude du banc, celle de la référence, les effets partagés/corrélés et l'incertitude propre au protocole de comparaison.
+MetrologyLab AI est un projet hybride ChatGPT + Python, distribué sous licence Apache-2.0, pour traiter des problèmes de métrologie avec une équipe de treize agents spécialisés, un RAG vectoriel gouverné, une recherche Internet traçable, un registre d'études persistant et un noyau de calcul déterministe extensible. Sa priorité est la caractérisation d'un banc par comparaison : il conserve séparément l'incertitude du banc, celle de la référence, les effets partagés/corrélés et l'incertitude propre au protocole de comparaison.
+
+Depuis la version 0.8.0, le projet et le skill portent le nom **MetrologyLab AI**. Le paquet Python `metro-master`, le module `metro_master`, la commande `metro-master` et le rôle interne `METRO-MASTER` restent disponibles afin de ne pas casser les intégrations existantes.
 
 Le projet ne contient le texte intégral d'aucune norme ISO ni d'aucun article payant. Le catalogue documentaire fourni est un index de métadonnées et de liens officiels vérifiés le 5 novembre 2026. Un agent ne peut citer une exigence ou un numéro de clause que si le texte ou l'extrait correspondant lui a effectivement été fourni.
 
@@ -27,8 +29,8 @@ Le projet ne contient le texte intégral d'aucune norme ISO ni d'aucun article p
 ## Installation et vérification
 
 ```powershell
-git clone https://github.com/houblou/metro-master.git
-cd metro-master
+git clone https://github.com/houblou/metrology-lab-ai.git
+cd metrology-lab-ai
 py -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install -e .
@@ -43,18 +45,18 @@ L'extraction de PDF est optionnelle et utilise `pypdf` :
 python -m pip install -e ".[pdf]"
 ```
 
-### Installer la compétence METRO-MASTER
+### Installer le skill MetrologyLab AI
 
-Le dépôt contient désormais une compétence Agent Skills autonome dans `skills/metro-master` et un manifeste de plugin dans `.codex-plugin/plugin.json`. L'installation par un gestionnaire compatible Agent Skills se fait depuis GitHub :
+Le dépôt contient une compétence Agent Skills autonome dans `skills/metrology-lab-ai` et un manifeste de plugin dans `.codex-plugin/plugin.json`. L'installation par un gestionnaire compatible Agent Skills se fait depuis GitHub :
 
 ```powershell
-npx skills add houblou/metro-master --skill metro-master
+npx skills add houblou/metrology-lab-ai --skill metrology-lab-ai
 ```
 
 Installation locale manuelle pour Codex sous Windows :
 
 ```powershell
-Copy-Item -Recurse -Force skills\metro-master "$env:USERPROFILE\.codex\skills\metro-master"
+Copy-Item -Recurse -Force skills\metrology-lab-ai "$env:USERPROFILE\.codex\skills\metrology-lab-ai"
 ```
 
 La compétence apporte les instructions françaises, les références statistiques et le pont portable. Pour exécuter les calculs déterministes, conserver aussi le dépôt ou installer le paquet Python. Le pont accepte `METRO_MASTER_PROJECT_ROOT` ou `--project-root` et ne contient aucun chemin personnel.
@@ -282,7 +284,7 @@ Le dépôt inclut le paquet bibliographique portable dans `library/external/cnam
 
 ## Licence
 
-Le code et les documents propres à METRO-MASTER sont distribués sous [Apache License 2.0](LICENSE). Le fichier [NOTICE](NOTICE) doit être conservé lors d'une redistribution. Les futurs composants tiers garderont leurs licences, notices et attributions respectives ; un dépôt public sans licence explicite ne sera pas copié dans le projet.
+Le code et les documents propres à MetrologyLab AI sont distribués sous [Apache License 2.0](LICENSE). Le fichier [NOTICE](NOTICE) doit être conservé lors d'une redistribution. Les futurs composants tiers garderont leurs licences, notices et attributions respectives ; un dépôt public sans licence explicite ne sera pas copié dans le projet.
 
 ## Carte du projet
 

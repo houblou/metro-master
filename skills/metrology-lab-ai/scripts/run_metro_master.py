@@ -1,4 +1,4 @@
-"""Pont portable entre la compétence Agent Skills et le paquet METRO-MASTER."""
+"""Pont portable entre le skill MetrologyLab AI et le paquet metro-master."""
 
 from __future__ import annotations
 
@@ -60,7 +60,7 @@ def main(argv: list[str] | None = None) -> int:
         from metro_master.cli import main as metro_main
     except ImportError as error:
         raise SystemExit(
-            "METRO-MASTER est introuvable. Installez le paquet Python, définissez "
+            "Le moteur MetrologyLab AI (paquet metro-master) est introuvable. Installez le paquet Python, définissez "
             "METRO_MASTER_PROJECT_ROOT ou passez --project-root CHEMIN."
         ) from error
     return metro_main(remaining)

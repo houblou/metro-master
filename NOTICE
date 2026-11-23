@@ -1,14 +1,14 @@
-METRO-MASTER
-Copyright 2026 METRO-MASTER contributors
+MetrologyLab AI
+Copyright 2026 MetrologyLab AI contributors
 
 This product is licensed under the Apache License, Version 2.0.
 
-Third-party components added to METRO-MASTER must retain their original
+Third-party components added to MetrologyLab AI must retain their original
 copyright, license and NOTICE information. Public repositories without an
 explicit reusable license are not copied into this project.
 
 The French engineering-statistics reference includes an original adaptation
 of concepts from the NIST/SEMATECH e-Handbook of Statistical Methods. The
 source content is identified by its source pack as U.S. Government public
-domain material. NIST and SEMATECH do not endorse METRO-MASTER. See
+domain material. NIST and SEMATECH do not endorse MetrologyLab AI. See
 THIRD_PARTY_NOTICES.md for provenance and scope.

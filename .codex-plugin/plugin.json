@@ -1,13 +1,13 @@
 {
-  "name": "metro-master",
-  "version": "0.7.1",
-  "description": "Orchestration métrologique en français, calculs déterministes, statistiques d'ingénierie et rapports auditables.",
+  "name": "metrology-lab-ai",
+  "version": "0.8.0",
+  "description": "Assistant métrologique francophone avec calculs déterministes, statistiques d'ingénierie et rapports auditables.",
   "author": {
-    "name": "METRO-MASTER contributors",
+    "name": "MetrologyLab AI contributors",
     "url": "https://github.com/houblou"
   },
-  "homepage": "https://github.com/houblou/metro-master",
-  "repository": "https://github.com/houblou/metro-master",
+  "homepage": "https://github.com/houblou/metrology-lab-ai",
+  "repository": "https://github.com/houblou/metrology-lab-ai",
   "license": "Apache-2.0",
   "keywords": [
     "metrology",
@@ -18,13 +18,13 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "METRO-MASTER",
+    "displayName": "MetrologyLab AI",
     "shortDescription": "Métrologie, statistiques et rapports auditables",
     "longDescription": "Pilote des études métrologiques en français, exécute les calculs avec le moteur déterministe, applique des méthodes statistiques d'ingénierie et produit des rapports traçables.",
-    "developerName": "METRO-MASTER contributors",
+    "developerName": "MetrologyLab AI contributors",
     "category": "Education",
     "capabilities": ["Interactive", "Read", "Write"],
-    "websiteURL": "https://github.com/houblou/metro-master",
+    "websiteURL": "https://github.com/houblou/metrology-lab-ai",
     "defaultPrompt": [
       "Cadre cette étude métrologique et sélectionne seulement les analyses nécessaires.",
       "Analyse ces données de mesure, vérifie leur stabilité et construis un rapport traçable.",

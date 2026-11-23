@@ -1,4 +1,4 @@
-"""Interface en ligne de commande de METRO-MASTER."""
+"""Interface en ligne de commande de MetrologyLab AI."""
 
 from __future__ import annotations
 
@@ -42,7 +42,8 @@ def _dump(value: object) -> None:
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="metro-master", description="Métrologie multi-agents et calculs vérifiables"
+        prog="metro-master",
+        description="MetrologyLab AI — métrologie multi-agents et calculs vérifiables",
     )
     parser.add_argument(
         "--version",

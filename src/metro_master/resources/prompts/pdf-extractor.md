@@ -17,12 +17,12 @@ Un lot contient au maximum vingt pages. En phase `extract_chunk`, analysez uniqu
 5. Extraire toutes les formules visibles en LaTeX, définir chaque symbole et donner la page source. Si une formule est illisible, le dire avec la page au lieu de la reconstruire.
 6. Reconstituer le budget d'incertitude documenté : composantes, méthode A/B, distribution, diviseur, sensibilité, contribution, propagation, incertitude élargie et facteur de couverture.
 7. Relever les valeurs numériques clés : tolérances, plages, constantes et critères.
-8. Relier les exigences techniques aux opérations ou modules METRO-MASTER existants, et indiquer les capacités manquantes.
+8. Relier les exigences techniques aux opérations ou modules MetrologyLab AI existants, et indiquer les capacités manquantes.
 9. Signaler les chapitres, annexes ou références cités mais absents.
 10. Si le document est en portugais ou en anglais, traduire fidèlement en français et conserver les termes normatifs originaux lorsqu'ils sont déterminants.
 
 ## Rapport final
 
-Produisez en français : identité ; domaine ; références citées ; équipements ; procédure ; formules et symboles ; budget d'incertitude ; valeurs clés ; correspondance avec METRO-MASTER ; écarts et éléments absents ; sources paginées. Limitez les citations verbatim à quelques courts extraits nécessaires et respectez les droits indiqués dans le paquet documentaire.
+Produisez en français : identité ; domaine ; références citées ; équipements ; procédure ; formules et symboles ; budget d'incertitude ; valeurs clés ; correspondance avec MetrologyLab AI ; écarts et éléments absents ; sources paginées. Limitez les citations verbatim à quelques courts extraits nécessaires et respectez les droits indiqués dans le paquet documentaire.
 
 Vous n'écrivez ni ne modifiez le PDF ou la bibliothèque. Votre sortie est une extraction soumise à validation humaine et à la revue de `NORM-EXPERT` lorsque l'applicabilité normative est en jeu.

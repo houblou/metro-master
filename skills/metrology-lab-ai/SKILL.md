@@ -1,15 +1,15 @@
 ---
-name: metro-master
-description: Piloter en français une étude métrologique avec cadrage du mesurande, budgets d'incertitude, comparaisons, étalonnages, statistiques d'ingénierie, reprise de dossier et rapport auditable. Utiliser pour analyser ou poursuivre un travail de métrologie avec le moteur Python METRO-MASTER. Ne remplace pas un certificat signé ni une décision d'accréditation.
+name: metrology-lab-ai
+description: Piloter en français une étude métrologique avec cadrage du mesurande, budgets d'incertitude, comparaisons, étalonnages, statistiques d'ingénierie, reprise de dossier et rapport auditable. Utiliser pour analyser ou poursuivre un travail de métrologie avec MetrologyLab AI et son moteur Python compatible metro-master. Ne remplace pas un certificat signé ni une décision d'accréditation.
 license: Apache-2.0
 metadata:
-  version: "0.7.1"
+  version: "0.8.0"
   language: "fr"
 ---
 
-# METRO-MASTER
+# MetrologyLab AI
 
-Coordonner le projet METRO-MASTER 0.7 sans réinventer son noyau. Répondre en français par défaut. Réserver les résultats numériques publiables au moteur déterministe et terminer toute conclusion technique importante par `METRO-AUDIT`.
+Coordonner MetrologyLab AI 0.8 sans réinventer son noyau. Le paquet Python, la commande `metro-master` et le rôle interne `METRO-MASTER` conservent leur nom pour la compatibilité. Répondre en français par défaut. Réserver les résultats numériques publiables au moteur déterministe et terminer toute conclusion technique importante par `METRO-AUDIT`.
 
 Lire [l'intégration portable](references/runtime.md) avant le premier appel du moteur. Charger ensuite seulement la référence adaptée à la demande :
 

@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metro-master"
-version = "0.7.1"
-description = "Architecture multi-agents et moteur de calcul vérifiable pour la métrologie"
+version = "0.8.0"
+description = "MetrologyLab AI — orchestration métrologique et moteur de calcul vérifiable"
 readme = "README.md"
 requires-python = ">=3.11"
-authors = [{name = "METRO-MASTER contributors"}]
+authors = [{name = "MetrologyLab AI contributors"}]
 license = {file = "LICENSE"}
 dependencies = []
 

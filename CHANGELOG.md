@@ -1,6 +1,20 @@
 # Journal des versions
 
-Les changements importants de METRO-MASTER sont consignés dans ce fichier. Le projet suit la numérotation sémantique : correctif `0.0.x`, fonctionnalité rétrocompatible `0.x.0`, rupture annoncée `x.0.0`.
+Les changements importants de MetrologyLab AI sont consignés dans ce fichier. Le projet suit la numérotation sémantique. Avant la version 1.0, un changement de nom d'invocation ou d'installation augmente la version mineure.
+
+## [0.8.0] - 2026-11-23
+
+### Renommé
+
+- le projet et son affichage public deviennent **MetrologyLab AI** ;
+- le dépôt GitHub devient `houblou/metrology-lab-ai` ;
+- le skill installable devient `$metrology-lab-ai` dans `skills/metrology-lab-ai` ;
+- le manifeste du plugin, les instructions d'installation et les métadonnées utilisent le nouveau nom.
+
+### Compatibilité
+
+- le paquet Python `metro_master`, la distribution `metro-master`, la commande `metro-master`, la variable `METRO_MASTER_PROJECT_ROOT` et le rôle interne `METRO-MASTER` restent disponibles ;
+- le changement de nom du skill justifie le passage de `0.7.1` à `0.8.0`.
 
 ## [0.7.1] - 2026-11-23
 
@@ -45,4 +59,5 @@ Les changements importants de METRO-MASTER sont consignés dans ce fichier. Le p
 - modules de calcul gouvernés, exports non officiels et tests automatisés ;
 - gestion des tokens avec profils `eco`, `standard` et `deep`.
 
-[0.7.1]: https://github.com/houblou/metro-master/releases/tag/v0.7.1
+[0.8.0]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.8.0
+[0.7.1]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.7.1

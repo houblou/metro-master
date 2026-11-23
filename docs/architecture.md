@@ -35,7 +35,7 @@
 
 ```mermaid
 flowchart LR
-    U[Utilisateur] --> C[METRO-MASTER coordinateur]
+    U[Utilisateur] --> C[MetrologyLab AI / rôle METRO-MASTER]
     C --> R[Routeur déterministe]
     R --> A[Agents spécialistes]
     P[PDF gouvernés + SHA-256] --> X[PDF-EXTRACTOR]
