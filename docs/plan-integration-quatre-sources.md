@@ -1,9 +1,9 @@
 # Plan complet d'intégration des quatre sources scientifiques
 
-- **Statut :** en cours — lots 0 à 2 livrés jusqu'à la version 0.9.1
+- **Statut :** en cours — lots 0 à 2 livrés jusqu'à la version 0.9.2
 - **Date de référence :** 2026-11-23
 - **Point de départ :** MetrologyLab AI 0.8.0, 86 tests réussis
-- **État d'exécution :** MetrologyLab AI 0.9.1, 103 tests réussis, prochain lot : Monte-Carlo JCGM 101
+- **État d'exécution :** MetrologyLab AI 0.9.2, 104 tests réussis, prochain lot : Monte-Carlo JCGM 101
 - **Politique de version :** chaque livraison de maturation incrémente seulement le correctif ; `1.0.0` nécessite une décision explicite du mainteneur
 - **Décision d'architecture :** [ADR-0007](adr/0007-integration-scientifique-gouvernee-et-traces.md)
 - **Objectif final :** intégrer les apports utiles des quatre dépôts sans perdre la séparation LLM/calcul, la compatibilité, les licences, la reproductibilité ni la traçabilité.
@@ -350,7 +350,7 @@ Une étude `INCOMPLET` ou `NON VALIDE` est tout de même sauvegardée.
 
 **Sortie :** les quatre opérations existantes deviennent totalement traçables avant toute extension.
 
-### Lot 2 — Grandeurs et unités (0.9.1)
+### Lot 2 — Grandeurs et unités (0.9.1 à 0.9.2)
 
 - [x] réunir l'algèbre dimensionnelle du registre et les unités des budgets ;
 - [x] définir un adaptateur interne minimal et un adaptateur Pint optionnel ;
@@ -361,7 +361,7 @@ Une étude `INCOMPLET` ou `NON VALIDE` est tout de même sauvegardée.
 
 **Sortie :** plus de comparaison naïve de chaînes d'unités dans le budget.
 
-### Lot 3 — Monte-Carlo JCGM 101 (0.9.2)
+### Lot 3 — Monte-Carlo JCGM 101 (0.9.3)
 
 - [ ] ajouter distributions prises en charge avec paramètres explicites ;
 - [ ] échantillonner les corrélations via une méthode numérique validée ;
@@ -373,7 +373,7 @@ Une étude `INCOMPLET` ou `NON VALIDE` est tout de même sauvegardée.
 
 **Sortie :** modèles non linéaires ou non gaussiens calculés et reproductibles.
 
-### Lot 4 — Statistiques d'ingénierie (0.9.3 à 0.9.5)
+### Lot 4 — Statistiques d'ingénierie (0.9.4 à 0.9.6)
 
 Ordre d'activation :
 
@@ -387,7 +387,7 @@ Ordre d'activation :
 
 Chaque module possède son contrat de plan. Par exemple, `gauge-rr-crossed` refuse l'absence de pièces, opérateurs, répétitions ou identifiabilité ; `process-capability` refuse un procédé déclaré instable ou sans limites de spécification.
 
-### Lot 5 — Expertise par grandeur (0.9.6)
+### Lot 5 — Expertise par grandeur (0.9.7)
 
 - [ ] créer des références françaises courtes par grandeur ;
 - [ ] router seulement les références nécessaires ;
@@ -397,7 +397,7 @@ Chaque module possède son contrat de plan. Par exemple, `gauge-rr-crossed` refu
 
 **Sortie :** couverture métier plus large sans treize prompts chargés simultanément.
 
-### Lot 6 — CMM, GD&T et surface (0.9.7)
+### Lot 6 — CMM, GD&T et surface (0.9.8)
 
 - [ ] ajouter le cadrage CMM, repères, palpage, thermique et stratégie de mesure ;
 - [ ] réutiliser les calculateurs transversaux de R&R et d'unités ;
@@ -602,4 +602,4 @@ Le programme est terminé lorsque :
 
 ## 15. Action en cours
 
-Les lots 0 et 1 sont livrés dans la version 0.9.0. Le lot 2 est livré dans la version 0.9.1 : algèbre dimensionnelle commune, conversions de contributions, coefficients de sensibilité typés, unité de sortie obligatoire pour les calculs compilés et adaptateur Pint optionnel. Le **lot 3 — Monte-Carlo JCGM 101** devient le prochain lot actif en `0.9.2` ; les statistiques avancées restent bloquées tant que ce calcul reproductible n'est pas terminé.
+Les lots 0 et 1 sont livrés dans la version 0.9.0. Le lot 2 est livré dans les versions 0.9.1 et 0.9.2 : algèbre dimensionnelle commune, conversions de contributions, coefficients de sensibilité typés, unité de sortie obligatoire pour les calculs compilés et adaptateur Pint optionnel corrigé après vérification réelle sous Pint 0.26. Le **lot 3 — Monte-Carlo JCGM 101** devient le prochain lot actif en `0.9.3` ; les statistiques avancées restent bloquées tant que ce calcul reproductible n'est pas terminé.

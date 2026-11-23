@@ -204,12 +204,12 @@ class PintQuantityAdapter:
             source_delta = {
                 "°C": "delta_degC",
                 "degC": "delta_degC",
-                "K": "delta_kelvin",
+                "K": "kelvin",
             }.get(from_unit, from_unit)
             target_delta = {
                 "°C": "delta_degC",
                 "degC": "delta_degC",
-                "K": "delta_kelvin",
+                "K": "kelvin",
             }.get(to_unit, to_unit)
             quantity = self._registry.Quantity(value, source_delta)
             return float(quantity.to(target_delta).magnitude)

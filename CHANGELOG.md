@@ -2,6 +2,13 @@
 
 Les changements importants de MetrologyLab AI sont consignés dans ce fichier. Pendant la maturation `0.9.x`, chaque livraison incrémente uniquement le correctif (`0.9.0` → `0.9.1` → `0.9.2`). Le passage à `1.0.0` est réservé à une décision explicite de maturité et ne découle pas automatiquement du volume de changements.
 
+## [0.9.2] - 2026-11-23
+
+### Corrigé
+
+- l'adaptateur Pint emploie maintenant `kelvin` pour un écart en kelvins au lieu de l'unité inexistante `delta_kelvin` ;
+- un test de contrat vérifie explicitement la conversion d'écart `°C` vers `K` avec les noms d'unités acceptés par Pint 0.26.
+
 ## [0.9.1] - 2026-11-23
 
 ### Ajouté
@@ -99,6 +106,7 @@ Les changements importants de MetrologyLab AI sont consignés dans ce fichier. P
 - modules de calcul gouvernés, exports non officiels et tests automatisés ;
 - gestion des tokens avec profils `eco`, `standard` et `deep`.
 
+[0.9.2]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.9.2
 [0.9.1]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.9.1
 [0.9.0]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.9.0
 [0.8.0]: https://github.com/houblou/metrology-lab-ai/releases/tag/v0.8.0

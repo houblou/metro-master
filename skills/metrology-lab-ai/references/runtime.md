@@ -21,7 +21,7 @@ py -m venv .venv
 .venv\Scripts\python.exe -m unittest discover -s tests -t . -q
 ```
 
-Version de projet attendue : `0.9.1`. Le nom public est `metrology-lab-ai` / `metrology_lab_ai`; `metro-master` / `metro_master` restent des alias compatibles. Chaque livraison de maturation incrémente uniquement le correctif (`0.9.0` → `0.9.1` → `0.9.2`). Le passage à `1.0.0` exige une décision explicite de maturité ; une compétence améliorée ne l'annonce jamais automatiquement.
+Version de projet attendue : `0.9.2`. Le nom public est `metrology-lab-ai` / `metrology_lab_ai`; `metro-master` / `metro_master` restent des alias compatibles. Chaque livraison de maturation incrémente uniquement le correctif (`0.9.0` → `0.9.1` → `0.9.2`). Le passage à `1.0.0` exige une décision explicite de maturité ; une compétence améliorée ne l'annonce jamais automatiquement.
 
 ## Appels utiles
 

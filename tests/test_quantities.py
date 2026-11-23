@@ -1,4 +1,5 @@
 import math
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -113,6 +114,29 @@ class QuantityTests(unittest.TestCase):
         ):
             with self.assertRaisesRegex(DependencyUnavailable, "units.*extra"):
                 PintQuantityAdapter()
+
+    def test_pint_adapter_uses_supported_temperature_difference_units(self):
+        calls = []
+
+        class FakeQuantity:
+            def __init__(self, value, unit):
+                self.magnitude = value
+                calls.append(("from", unit))
+
+            def to(self, unit):
+                calls.append(("to", unit))
+                return self
+
+        fake_pint = SimpleNamespace(
+            UnitRegistry=lambda: SimpleNamespace(Quantity=FakeQuantity)
+        )
+        with patch(
+            "metro_master.quantities.importlib.import_module",
+            return_value=fake_pint,
+        ):
+            adapter = PintQuantityAdapter()
+            adapter.convert_value(1.0, "°C", "K", difference=True)
+        self.assertEqual(calls, [("from", "delta_degC"), ("to", "kelvin")])
 
 
 if __name__ == "__main__":
