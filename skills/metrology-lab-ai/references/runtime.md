@@ -21,7 +21,7 @@ py -m venv .venv
 .venv\Scripts\python.exe -m unittest discover -s tests -t . -q
 ```
 
-Version de projet attendue : `0.9.4`. La distribution PyPI, la commande et le paquet publics sont `metrology-lab-ai` / `metrology_lab_ai`; `metro-master` / `metro_master` restent des alias compatibles pour la CLI et les imports.
+Version de projet attendue : `0.9.5`. La distribution PyPI, la commande et le paquet publics sont `metrology-lab-ai` / `metrology_lab_ai`; `metro-master` / `metro_master` restent des alias compatibles pour la CLI et les imports.
 
 ## Appels utiles
 

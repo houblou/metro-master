@@ -15,10 +15,10 @@ SKILL = ROOT / "skills" / "metrology-lab-ai"
 
 
 class MetrologyLabAiSkillPackageTests(unittest.TestCase):
-    def test_plugin_manifest_targets_v094_skill(self) -> None:
+    def test_plugin_manifest_targets_v095_skill(self) -> None:
         manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["name"], "metrology-lab-ai")
-        self.assertEqual(manifest["version"], "0.9.4")
+        self.assertEqual(manifest["version"], "0.9.5")
         self.assertEqual(manifest["license"], "Apache-2.0")
         self.assertEqual(manifest["skills"], "./skills/")
 
@@ -26,7 +26,7 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
         project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
         manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
         skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-        expected = "0.9.4"
+        expected = "0.9.5"
         self.assertEqual(project["project"]["version"], expected)
         self.assertEqual(manifest["version"], expected)
         self.assertEqual(__version__, expected)
@@ -35,7 +35,7 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
     def test_skill_is_portable_and_routes_to_progressive_references(self) -> None:
         skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("name: metrology-lab-ai", skill_text)
-        self.assertIn('version: "0.9.4"', skill_text)
+        self.assertIn('version: "0.9.5"', skill_text)
         self.assertIn("references/statistiques-nist-fr.md", skill_text)
         self.assertIn("references/rapport-metrologique-fr.md", skill_text)
         self.assertIn("references/runtime.md", skill_text)
@@ -61,7 +61,7 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
         for topic in ("Gauge R&R", "Stabilité avant capabilité", "régression", "CUSUM", "fiabilité"):
             self.assertIn(topic, reference)
 
-    def test_portable_bridge_reaches_the_v094_engine(self) -> None:
+    def test_portable_bridge_reaches_the_v095_engine(self) -> None:
         process = subprocess.run(
             [
                 sys.executable,
@@ -93,7 +93,7 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
     def test_public_python_alias_exports_the_engine(self) -> None:
         import metrology_lab_ai
 
-        self.assertEqual(metrology_lab_ai.__version__, "0.9.4")
+        self.assertEqual(metrology_lab_ai.__version__, "0.9.5")
         self.assertTrue(hasattr(metrology_lab_ai, "DeterministicEngine"))
 
     def test_publication_and_pages_metadata_are_present(self) -> None:
@@ -105,8 +105,20 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
         self.assertIn("scientific-computing", project["project"]["keywords"])
         self.assertTrue((ROOT / "mkdocs.yml").is_file())
         self.assertTrue((ROOT / "docs" / "robots.txt").is_file())
+        self.assertTrue((ROOT / "docs" / "llms.txt").is_file())
+        self.assertTrue((ROOT / "docs" / "indexnow-key.txt").is_file())
+        self.assertTrue((ROOT / "docs" / "bilan-incertitude-mesure.md").is_file())
         self.assertTrue((ROOT / ".github" / "workflows" / "pages.yml").is_file())
         self.assertTrue((ROOT / ".github" / "workflows" / "publish-pypi.yml").is_file())
+        pages_workflow = (
+            ROOT / ".github" / "workflows" / "pages.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("https://api.indexnow.org/indexnow", pages_workflow)
+        seo_template = (ROOT / "docs" / "overrides" / "main.html").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn('property="og:title"', seo_template)
+        self.assertIn('"@type": "FAQPage"', seo_template)
 
 
 if __name__ == "__main__":

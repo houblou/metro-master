@@ -1,10 +1,15 @@
 site_name: MetrologyLab AI
 site_description: Assistant de métrologie open source en français pour l'incertitude de mesure, ISO/IEC 17025, JCGM/GUM et les rapports auditables.
 site_url: https://houblou.github.io/metrology-lab-ai/
+site_author: MetrologyLab AI contributors
 repo_url: https://github.com/houblou/metrology-lab-ai
 repo_name: houblou/metrology-lab-ai
 edit_uri: edit/main/docs/
 copyright: Copyright MetrologyLab AI contributors — Apache-2.0
+
+exclude_docs: |
+  context-library-cnam.md
+  review-expert-theorie-mesure.md
 
 theme:
   name: material
@@ -20,6 +25,7 @@ theme:
 
 nav:
   - Accueil: index.md
+  - Bilan d'incertitude: bilan-incertitude-mesure.md
   - Architecture: architecture.md
   - Exécution vérifiable: structured-execution.md
   - Comparaison métrologique: comparison-method.md
@@ -34,6 +40,7 @@ plugins:
 markdown_extensions:
   - admonition
   - attr_list
+  - meta
   - tables
   - toc:
       permalink: true

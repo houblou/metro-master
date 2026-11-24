@@ -1,6 +1,11 @@
 # MetrologyLab AI
 
-MetrologyLab AI est un projet hybride ChatGPT + Python, distribué sous licence Apache-2.0, pour traiter des problèmes de métrologie avec une équipe de treize agents spécialisés, un RAG vectoriel gouverné, une recherche Internet traçable, un registre d'études persistant et un noyau de calcul déterministe extensible. Sa priorité est la caractérisation d'un banc par comparaison : il conserve séparément l'incertitude du banc, celle de la référence, les effets partagés/corrélés et l'incertitude propre au protocole de comparaison.
+[![PyPI](https://img.shields.io/pypi/v/metrology-lab-ai)](https://pypi.org/project/metrology-lab-ai/)
+[![Python](https://img.shields.io/pypi/pyversions/metrology-lab-ai)](https://pypi.org/project/metrology-lab-ai/)
+[![Tests](https://github.com/houblou/metrology-lab-ai/actions/workflows/tests.yml/badge.svg)](https://github.com/houblou/metrology-lab-ai/actions/workflows/tests.yml)
+[![License](https://img.shields.io/github/license/houblou/metrology-lab-ai)](LICENSE)
+
+MetrologyLab AI est un assistant métrologique Python open source, distribué sous licence Apache-2.0, pour construire des bilans d'incertitude traçables, comparer des moyens de mesure et préparer des rapports auditables. Il associe ChatGPT ou un autre LLM à treize agents spécialisés, un RAG vectoriel gouverné, une recherche Internet traçable, un registre d'études persistant et un noyau de calcul déterministe extensible. Sa priorité est la caractérisation d'un banc par comparaison : il conserve séparément l'incertitude du banc, celle de la référence, les effets partagés/corrélés et l'incertitude propre au protocole de comparaison.
 
 Le nom public est cohérent de bout en bout : distribution PyPI et projet **MetrologyLab AI**, paquet importable `metrology_lab_ai` et commande `metrology-lab-ai`. Le module et la commande historiques `metro_master` / `metro-master`, ainsi que le rôle interne `METRO-MASTER`, restent disponibles afin de ne pas casser les intégrations existantes.
 
@@ -87,6 +92,7 @@ metrology-lab-ai --version
 ```
 
 La documentation navigable est publiée sur [houblou.github.io/metrology-lab-ai](https://houblou.github.io/metrology-lab-ai/) et le paquet sur [PyPI](https://pypi.org/project/metrology-lab-ai/).
+Le guide [Bilan d'incertitude de mesure](https://houblou.github.io/metrology-lab-ai/bilan-incertitude-mesure/) présente le modèle GUM, les corrélations, la traçabilité et les limites mathématiques actuelles.
 
 ## Premiers usages
 

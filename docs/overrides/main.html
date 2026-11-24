@@ -2,21 +2,79 @@
 
 {% block extrahead %}
   {{ super() }}
+  {% set seo_title = page.meta.title if page and page.meta and page.meta.title else config.site_name %}
+  {% set seo_description = page.meta.description if page and page.meta and page.meta.description else config.site_description %}
+  {% set seo_url = page.canonical_url if page and page.canonical_url else config.site_url %}
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="author" content="MetrologyLab AI contributors">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:site_name" content="MetrologyLab AI">
+  <meta property="og:title" content="{{ seo_title | e }}">
+  <meta property="og:description" content="{{ seo_description | e }}">
+  <meta property="og:url" content="{{ seo_url | e }}">
+  <meta property="og:image" content="https://opengraph.githubassets.com/metrology-lab-ai/houblou/metrology-lab-ai">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ seo_title | e }}">
+  <meta name="twitter:description" content="{{ seo_description | e }}">
+  <meta name="twitter:image" content="https://opengraph.githubassets.com/metrology-lab-ai/houblou/metrology-lab-ai">
+  <link rel="alternate" hreflang="fr" href="{{ seo_url | e }}">
+  <link rel="alternate" hreflang="x-default" href="{{ seo_url | e }}">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareSourceCode",
-    "name": "MetrologyLab AI",
-    "description": "Assistant de métrologie open source en français pour l'incertitude de mesure, ISO/IEC 17025, JCGM/GUM et les rapports auditables.",
-    "codeRepository": "https://github.com/houblou/metrology-lab-ai",
-    "downloadUrl": "https://pypi.org/project/metrology-lab-ai/",
-    "license": "https://www.apache.org/licenses/LICENSE-2.0",
-    "programmingLanguage": "Python",
-    "runtimePlatform": "Python 3.11+",
-    "inLanguage": ["fr", "en"],
-    "url": "https://houblou.github.io/metrology-lab-ai/"
+    "@graph": [
+      {
+        "@type": "SoftwareSourceCode",
+        "name": "MetrologyLab AI",
+        "alternateName": "metrology-lab-ai",
+        "description": "Assistant de métrologie open source en français pour l'incertitude de mesure, ISO/IEC 17025, JCGM/GUM et les rapports auditables.",
+        "codeRepository": "https://github.com/houblou/metrology-lab-ai",
+        "downloadUrl": "https://pypi.org/project/metrology-lab-ai/",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "programmingLanguage": "Python",
+        "runtimePlatform": "Python 3.11+",
+        "softwareVersion": "0.9.5",
+        "keywords": ["métrologie", "incertitude de mesure", "GUM", "JCGM", "ISO 17025", "étalonnage", "Python"],
+        "inLanguage": "fr",
+        "url": "https://houblou.github.io/metrology-lab-ai/",
+        "sameAs": [
+          "https://github.com/houblou/metrology-lab-ai",
+          "https://pypi.org/project/metrology-lab-ai/"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "name": "MetrologyLab AI",
+        "url": "https://houblou.github.io/metrology-lab-ai/",
+        "inLanguage": "fr"
+      }
+    ]
   }
   </script>
+  {% if page and page.is_homepage %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "MetrologyLab AI remplace-t-il un métrologue ?",
+        "acceptedAnswer": {"@type": "Answer", "text": "Non. Il structure, calcule, vérifie et trace, mais la validation de méthode et la décision finale restent sous responsabilité humaine."}
+      },
+      {
+        "@type": "Question",
+        "name": "MetrologyLab AI traite-t-il les composantes corrélées ?",
+        "acceptedAnswer": {"@type": "Answer", "text": "Oui. La propagation linéaire accepte une matrice de corrélation justifiée et vérifie sa cohérence."}
+      },
+      {
+        "@type": "Question",
+        "name": "MetrologyLab AI traite-t-il les modèles fortement non linéaires ?",
+        "acceptedAnswer": {"@type": "Answer", "text": "Pas encore avec le noyau standard. Le projet signale cette limite et recommande une méthode adaptée, par exemple Monte-Carlo."}
+      }
+    ]
+  }
+  </script>
+  {% endif %}
 {% endblock %}

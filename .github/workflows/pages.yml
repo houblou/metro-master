@@ -57,3 +57,51 @@ jobs:
       - name: Deploy Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Notify IndexNow
+        continue-on-error: true
+        env:
+          INDEXNOW_KEY: e56771d43c944c1aaf61da442d63b61f
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import time
+          import urllib.request
+          import xml.etree.ElementTree as ET
+
+          site = "https://houblou.github.io/metrology-lab-ai/"
+          key = os.environ["INDEXNOW_KEY"]
+          key_location = f"{site}indexnow-key.txt"
+
+          for attempt in range(5):
+              try:
+                  with urllib.request.urlopen(key_location, timeout=15) as response:
+                      if response.read().decode("utf-8").strip() == key:
+                          break
+              except Exception:
+                  if attempt == 4:
+                      raise
+                  time.sleep(2)
+
+          with urllib.request.urlopen(f"{site}sitemap.xml", timeout=15) as response:
+              root = ET.fromstring(response.read())
+          namespace = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+          urls = [node.text for node in root.findall("s:url/s:loc", namespace) if node.text]
+          payload = json.dumps({
+              "host": "houblou.github.io",
+              "key": key,
+              "keyLocation": key_location,
+              "urlList": urls,
+          }).encode("utf-8")
+          request = urllib.request.Request(
+              "https://api.indexnow.org/indexnow",
+              data=payload,
+              headers={"Content-Type": "application/json; charset=utf-8"},
+              method="POST",
+          )
+          with urllib.request.urlopen(request, timeout=30) as response:
+              if response.status not in (200, 202):
+                  raise RuntimeError(f"IndexNow returned HTTP {response.status}")
+              print(f"IndexNow accepted {len(urls)} URLs with HTTP {response.status}")
+          PY

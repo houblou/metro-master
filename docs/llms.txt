@@ -1,0 +1,27 @@
+# MetrologyLab AI
+
+> Assistant métrologique Python open source en français, avec calculs déterministes, bilans d'incertitude traçables et rapports auditables.
+
+Site: https://houblou.github.io/metrology-lab-ai/
+GitHub: https://github.com/houblou/metrology-lab-ai
+PyPI: https://pypi.org/project/metrology-lab-ai/
+Licence: Apache-2.0
+
+Pages principales:
+- Bilan d'incertitude: https://houblou.github.io/metrology-lab-ai/bilan-incertitude-mesure/
+- Architecture: https://houblou.github.io/metrology-lab-ai/architecture/
+- Exécution vérifiable: https://houblou.github.io/metrology-lab-ai/structured-execution/
+- Comparaison métrologique: https://houblou.github.io/metrology-lab-ai/comparison-method/
+- Gestion des tokens: https://houblou.github.io/metrology-lab-ai/token-management/
+
+Capacités actuelles:
+- propagation linéaire avec unités, sensibilités, corrélations et covariances;
+- incertitude composée, incertitude élargie et Welch-Satterthwaite sous conditions;
+- comparaison de moyens de mesure, erreur normalisée, score zêta et statistiques de paires;
+- traces canoniques, validation des entrées et refus explicites;
+- skill Agent Skills et orchestrateur Python.
+
+Limites importantes:
+- ne remplace pas la validation d'un métrologue ni un certificat signé;
+- pas encore de Monte-Carlo dans le noyau standard;
+- les exigences normatives doivent être vérifiées dans le texte applicable réellement fourni.
