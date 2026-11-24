@@ -3,7 +3,7 @@ name: metrology-lab-ai
 description: Piloter en français une étude métrologique avec cadrage du mesurande, budgets d'incertitude, comparaisons, étalonnages, statistiques d'ingénierie, reprise de dossier et rapport auditable. Utiliser pour analyser ou poursuivre un travail de métrologie avec MetrologyLab AI et son moteur Python compatible metro-master. Ne remplace pas un certificat signé ni une décision d'accréditation.
 license: Apache-2.0
 metadata:
-  version: "0.9.2"
+  version: "0.9.3"
   language: "fr"
 ---
 
@@ -72,12 +72,6 @@ Si le moteur ne possède pas encore la méthode demandée, produire le plan, le 
 Lorsqu'un dossier existe déjà, inspecter sa structure et ses artefacts avant de demander à l'utilisateur où il en est. Déduire seulement les étapes démontrées par des fichiers non vides et cohérents. Une présence de fichier ne vaut pas validation scientifique.
 
 Conserver un état explicite des phases, des preuves, des calculs et des validations. Ne pas passer à l'étape suivante si un prérequis critique manque ; poursuivre avec un statut `incomplet` lorsque le travail utile reste possible. Écrire l'introduction et le résumé après stabilisation des résultats pour éviter les contradictions.
-
-## Sources et licences
-
-- La synthèse statistique française est adaptée de concepts du NIST/SEMATECH e-Handbook, contenu du gouvernement américain indiqué comme domaine public par le paquet source. Conserver l'attribution et l'absence d'endorsement.
-- Le workflow de rapport est une conception indépendante en français. Le dépôt observé `jeandead/metrology_assistant` ne présentait pas de licence réutilisable lors de la vérification ; aucun texte, code ou gabarit n'en est copié.
-- Ne jamais copier un dépôt public sans licence explicite. Réimplémenter les idées générales et documenter la provenance.
 
 ## Sortie attendue
 

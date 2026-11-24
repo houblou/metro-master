@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="author" content="MetrologyLab AI contributors">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "MetrologyLab AI",
+    "description": "Assistant de métrologie open source en français pour l'incertitude de mesure, ISO/IEC 17025, JCGM/GUM et les rapports auditables.",
+    "codeRepository": "https://github.com/houblou/metrology-lab-ai",
+    "downloadUrl": "https://pypi.org/project/metrology-lab-ai/",
+    "license": "https://www.apache.org/licenses/LICENSE-2.0",
+    "programmingLanguage": "Python",
+    "runtimePlatform": "Python 3.11+",
+    "inLanguage": ["fr", "en"],
+    "url": "https://houblou.github.io/metrology-lab-ai/"
+  }
+  </script>
+{% endblock %}

@@ -15,10 +15,10 @@ SKILL = ROOT / "skills" / "metrology-lab-ai"
 
 
 class MetrologyLabAiSkillPackageTests(unittest.TestCase):
-    def test_plugin_manifest_targets_v092_skill(self) -> None:
+    def test_plugin_manifest_targets_v093_skill(self) -> None:
         manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["name"], "metrology-lab-ai")
-        self.assertEqual(manifest["version"], "0.9.2")
+        self.assertEqual(manifest["version"], "0.9.3")
         self.assertEqual(manifest["license"], "Apache-2.0")
         self.assertEqual(manifest["skills"], "./skills/")
 
@@ -26,7 +26,7 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
         project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
         manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
         skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-        expected = "0.9.2"
+        expected = "0.9.3"
         self.assertEqual(project["project"]["version"], expected)
         self.assertEqual(manifest["version"], expected)
         self.assertEqual(__version__, expected)
@@ -35,7 +35,7 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
     def test_skill_is_portable_and_routes_to_progressive_references(self) -> None:
         skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("name: metrology-lab-ai", skill_text)
-        self.assertIn('version: "0.9.2"', skill_text)
+        self.assertIn('version: "0.9.3"', skill_text)
         self.assertIn("references/statistiques-nist-fr.md", skill_text)
         self.assertIn("references/rapport-metrologique-fr.md", skill_text)
         self.assertIn("references/runtime.md", skill_text)
@@ -61,14 +61,7 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
         for topic in ("Gauge R&R", "Stabilité avant capabilité", "régression", "CUSUM", "fiabilité"):
             self.assertIn(topic, reference)
 
-    def test_report_reference_is_explicitly_independent(self) -> None:
-        reference = (SKILL / "references" / "rapport-metrologique-fr.md").read_text(encoding="utf-8")
-        self.assertIn("rédigé indépendamment", reference)
-        self.assertIn("ne présentait pas de licence explicite", reference)
-        self.assertIn("Aucun texte, code, gabarit", reference)
-        self.assertIn("Principe de reprise consciente de l'état", reference)
-
-    def test_portable_bridge_reaches_the_v092_engine(self) -> None:
+    def test_portable_bridge_reaches_the_v093_engine(self) -> None:
         process = subprocess.run(
             [
                 sys.executable,
@@ -91,7 +84,7 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
 
     def test_legacy_python_and_cli_names_remain_compatible(self) -> None:
         project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
-        self.assertEqual(project["project"]["name"], "metro-master")
+        self.assertEqual(project["project"]["name"], "metrology-lab-ai")
         self.assertIn("metro-master", project["project"]["scripts"])
         self.assertIn("metrology-lab-ai", project["project"]["scripts"])
         self.assertTrue((ROOT / "src" / "metro_master").is_dir())
@@ -100,8 +93,20 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
     def test_public_python_alias_exports_the_engine(self) -> None:
         import metrology_lab_ai
 
-        self.assertEqual(metrology_lab_ai.__version__, "0.9.2")
+        self.assertEqual(metrology_lab_ai.__version__, "0.9.3")
         self.assertTrue(hasattr(metrology_lab_ai, "DeterministicEngine"))
+
+    def test_publication_and_pages_metadata_are_present(self) -> None:
+        project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+        self.assertEqual(
+            project["project"]["urls"]["Homepage"],
+            "https://houblou.github.io/metrology-lab-ai/",
+        )
+        self.assertIn("scientific-computing", project["project"]["keywords"])
+        self.assertTrue((ROOT / "mkdocs.yml").is_file())
+        self.assertTrue((ROOT / "docs" / "robots.txt").is_file())
+        self.assertTrue((ROOT / ".github" / "workflows" / "pages.yml").is_file())
+        self.assertTrue((ROOT / ".github" / "workflows" / "publish-pypi.yml").is_file())
 
 
 if __name__ == "__main__":

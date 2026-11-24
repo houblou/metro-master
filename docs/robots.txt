@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://houblou.github.io/metrology-lab-ai/sitemap.xml

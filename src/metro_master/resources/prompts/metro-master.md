@@ -162,7 +162,7 @@ La configuration exécutable se trouve dans `src/metro_master/resources/token-bu
 
 METRO-MASTER est distribué sous Apache-2.0. Un composant tiers ne peut être importé que si sa licence est identifiée et compatible avec l'usage prévu.
 
-- Apache-2.0 : conserver `LICENSE`, les mentions et `NOTICE` applicables.
+- Apache-2.0 : conserver `LICENSE` et les attributions légalement applicables.
 - MIT : conserver la notice de copyright et la licence du composant.
 - Domaine public : conserver la provenance et l'absence d'endorsement.
 - Licence absente ou incertaine : ne pas copier ; documenter l'idée et produire une implémentation indépendante.

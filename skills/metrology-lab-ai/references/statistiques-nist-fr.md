@@ -4,11 +4,7 @@
 
 Cette référence est une adaptation française orientée MetrologyLab AI des concepts du **NIST/SEMATECH e-Handbook of Statistical Methods, NIST Handbook 151**. Le paquet consulté indique que le contenu NIST est une œuvre du gouvernement des États-Unis dans le domaine public américain. Cette adaptation n'est pas une publication du NIST ou de SEMATECH et n'est approuvée par aucun de ces organismes.
 
-Source consultée le 22 novembre 2026 :
-
-- `jgsystemsconsulting/jgs-se-knowledge-packs`, `packs/nist-stat-handbook/SKILL.md` ;
-- licence du paquet : `packs/nist-stat-handbook/LICENSE` ;
-- source officielle à privilégier pour une citation scientifique : NIST/SEMATECH e-Handbook.
+Pour une citation scientifique, consulter directement l'édition applicable du NIST/SEMATECH e-Handbook.
 
 Le présent guide ne reproduit ni galeries de formules, ni jeux de données, ni figures, ni cas détaillés, ni code du Handbook. Il synthétise des critères de sélection et des garde-fous en français.
 

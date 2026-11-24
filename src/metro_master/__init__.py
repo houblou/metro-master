@@ -41,7 +41,6 @@ from .rag import (
     VectorKnowledgeIndex,
 )
 from .study_history import StudyStore
-from .source_registry import SourceRegistry
 from .token_budget import TokenBudgetExceeded, TokenBudgetPolicy, estimate_tokens
 from .trace import CalculationTrace
 from .uncertainty import propagate_linear
@@ -66,7 +65,6 @@ __all__ = [
     "CallableResearchProvider",
     "ResearchRequest",
     "ResearchSource",
-    "SourceRegistry",
     "CallableEmbeddingProvider",
     "HashingEmbeddingProvider",
     "HybridRagRetriever",

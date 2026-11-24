@@ -6,7 +6,6 @@ import unittest
 
 from metro_master.execution import CalculationRequest, DeterministicEngine
 from metro_master.orchestrator import MetroOrchestrator
-from metro_master.source_registry import SourceRegistry
 from metro_master.study_history import StudyStore
 from metro_master.trace import canonical_sha256
 
@@ -126,20 +125,6 @@ class TraceSourceCompletionTests(unittest.TestCase):
         tampered = replace(record.trace, result_sha256="0" * 64)
         with self.assertRaises(ValueError):
             tampered.verify()
-
-    def test_four_frozen_sources_and_targets_are_valid(self):
-        registry = SourceRegistry.load()
-        self.assertEqual(len(registry.assets), 4)
-        self.assertEqual(
-            {item.source_id for item in registry.assets},
-            {
-                "kdense-uncertainty-and-units",
-                "kdense-metrology-scientist",
-                "nist-stat-handbook-pack",
-                "mp-ai-20-metrology",
-            },
-        )
-        registry.validate_local_targets(ROOT)
 
     def test_trace_output_refuses_to_overwrite(self):
         from metro_master.cli import _write_trace

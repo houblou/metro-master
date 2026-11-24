@@ -2,7 +2,7 @@
 
 ## Statut et provenance
 
-Ce workflow a été rédigé indépendamment pour MetrologyLab AI. Il reprend l'idée générale d'une orchestration par phases et d'une reprise consciente de l'état d'un dossier. Le dépôt public `jeandead/metrology_assistant`, consulté au commit `8dd0d41843514f2740628abaae4f75d2dedcd72d` le 22 novembre 2026, ne présentait pas de licence explicite détectée. Aucun texte, code, gabarit, structure de fichiers ou instruction détaillée n'en est copié.
+Ce workflow décrit une orchestration par phases et une reprise consciente de l'état d'un dossier métrologique.
 
 Le workflow ci-dessous est spécifique à l'architecture, aux garde-fous et aux formats de MetrologyLab AI.
 

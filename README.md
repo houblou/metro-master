@@ -2,9 +2,7 @@
 
 MetrologyLab AI est un projet hybride ChatGPT + Python, distribué sous licence Apache-2.0, pour traiter des problèmes de métrologie avec une équipe de treize agents spécialisés, un RAG vectoriel gouverné, une recherche Internet traçable, un registre d'études persistant et un noyau de calcul déterministe extensible. Sa priorité est la caractérisation d'un banc par comparaison : il conserve séparément l'incertitude du banc, celle de la référence, les effets partagés/corrélés et l'incertitude propre au protocole de comparaison.
 
-Depuis la version 0.9.0, le nom public est cohérent de bout en bout : projet et skill **MetrologyLab AI**, paquet importable `metrology_lab_ai` et commande `metrology-lab-ai`. La distribution, le module et la commande historiques `metro-master` / `metro_master`, ainsi que le rôle interne `METRO-MASTER`, restent disponibles afin de ne pas casser les intégrations existantes.
-
-Pendant la maturation, chaque livraison incrémente seulement le correctif : `0.9.0`, `0.9.1`, `0.9.2`, etc. La version `1.0.0` ne sera pas déduite automatiquement de la quantité de changements : elle sera décidée explicitement lorsque le niveau de maturité attendu sera atteint.
+Le nom public est cohérent de bout en bout : distribution PyPI et projet **MetrologyLab AI**, paquet importable `metrology_lab_ai` et commande `metrology-lab-ai`. Le module et la commande historiques `metro_master` / `metro-master`, ainsi que le rôle interne `METRO-MASTER`, restent disponibles afin de ne pas casser les intégrations existantes.
 
 Le projet ne contient le texte intégral d'aucune norme ISO ni d'aucun article payant. Le catalogue documentaire fourni est un index de métadonnées et de liens officiels vérifiés le 5 novembre 2026. Un agent ne peut citer une exigence ou un numéro de clause que si le texte ou l'extrait correspondant lui a effectivement été fourni.
 
@@ -30,6 +28,17 @@ Le projet ne contient le texte intégral d'aucune norme ISO ni d'aucun article p
 - des exemples JSON, des tests et une documentation d'architecture/audit.
 
 ## Installation et vérification
+
+Installation depuis PyPI :
+
+```powershell
+python -m pip install metrology-lab-ai
+metrology-lab-ai --version
+```
+
+Les extensions restent facultatives : `metrology-lab-ai[units]` ajoute Pint et `metrology-lab-ai[pdf]` ajoute l'extraction PDF.
+
+Installation depuis les sources :
 
 ```powershell
 git clone https://github.com/houblou/metrology-lab-ai.git
@@ -70,12 +79,6 @@ Copy-Item -Recurse -Force skills\metrology-lab-ai "$env:USERPROFILE\.codex\skill
 
 La compétence apporte les instructions françaises, les références statistiques et le pont portable. Pour exécuter les calculs déterministes, conserver aussi le dépôt ou installer le paquet Python. Le pont accepte `METRO_MASTER_PROJECT_ROOT` ou `--project-root` et ne contient aucun chemin personnel.
 
-Les ajouts de la v0.7 comprennent :
-
-- un guide français de statistiques d'ingénierie inspiré du NIST/SEMATECH Handbook : EDA, processus de mesure, Gauge R&R, stabilité et capabilité, régression, DOE, SPC, comparaisons et fiabilité ;
-- un workflow français pour créer, reprendre et auditer un rapport métrologique à partir de l'état réellement observé du dossier ;
-- une attribution explicite dans [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Le second workflow est une implémentation indépendante : aucun contenu du dépôt sans licence explicite n'a été copié.
-
 Afficher la version réellement installée :
 
 ```powershell
@@ -83,7 +86,7 @@ metrology-lab-ai --version
 # alias historique : metro-master --version
 ```
 
-Les évolutions sont recensées dans [CHANGELOG.md](CHANGELOG.md).
+La documentation navigable est publiée sur [houblou.github.io/metrology-lab-ai](https://houblou.github.io/metrology-lab-ai/) et le paquet sur [PyPI](https://pypi.org/project/metrology-lab-ai/).
 
 ## Premiers usages
 
@@ -286,7 +289,6 @@ Le dépôt inclut le paquet bibliographique portable dans `library/external/cnam
 - Le noyau implémente une propagation linéaire. Pour un modèle fortement non linéaire ou une distribution non gaussienne, utiliser une méthode adaptée (par exemple Monte-Carlo) et documenter sa validation.
 - Le noyau ne fournit pas lui-même de moteur de recherche commercial ni de navigateur. La qualité, les quotas, les clés et les droits d'accès du `ResearchProvider` restent sous la responsabilité de l'intégrateur.
 - L'embedding intégré est vectoriel mais lexical. Une recherche sémantique multilingue nécessite un modèle d'embedding injecté. Un corpus volumineux nécessitera également un index vectoriel spécialisé.
-- Le modèle scalaire actuel ne porte pas les unités des coefficients de sensibilité. Un budget est donc accepté uniquement si toutes les composantes déclarent la même unité, ou si toutes la laissent explicitement non spécifiée.
 - L'extraction PDF repose sur la couche texte du fichier. Une page scannée ou une formule uniquement graphique est signalée comme vide ou potentiellement incomplète ; aucun OCR ni reconstruction de formule n'est improvisé.
 - L'approbateur de module est actuellement une identité déclarée dans la CLI, pas une authentification cryptographique. Pour un usage multi-utilisateur, ajouter identité, signature et contrôle d'accès.
 - Le langage déclaratif couvre des formules scalaires. Monte-Carlo, régression, optimisation et algorithmes itératifs exigent encore un module natif revu ou un futur worker Python isolé.
@@ -296,7 +298,7 @@ Le dépôt inclut le paquet bibliographique portable dans `library/external/cnam
 
 ## Licence
 
-Le code et les documents propres à MetrologyLab AI sont distribués sous [Apache License 2.0](LICENSE). Le fichier [NOTICE](NOTICE) doit être conservé lors d'une redistribution. Les futurs composants tiers garderont leurs licences, notices et attributions respectives ; un dépôt public sans licence explicite ne sera pas copié dans le projet.
+Le code et les documents propres à MetrologyLab AI sont distribués sous [Apache License 2.0](LICENSE). Les méthodes statistiques font notamment référence au NIST/SEMATECH e-Handbook, publication du gouvernement américain ; cette mention ne constitue pas une approbation du projet par le NIST ou SEMATECH. Aucun texte intégral de norme ou contenu propriétaire n'est redistribué.
 
 ## Carte du projet
 
@@ -320,7 +322,6 @@ src/metro_master/
   library.py         catalogue et contrôles de provenance
   resources/         prompts et métadonnées embarqués
 docs/                architecture, méthode, ChatGPT et validation
-CONTEXT.md            glossaire du domaine et invariants partagés
 examples/            entrées reproductibles et adaptateur
 modules/             exemples et registre local de capacités extensibles
 knowledge/           registre local des connaissances candidates/validées

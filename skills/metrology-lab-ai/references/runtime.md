@@ -4,7 +4,7 @@
 
 Utiliser dans cet ordre :
 
-1. la commande `metro-master` si le paquet Python est installé ;
+1. la commande `metrology-lab-ai` si le paquet Python est installé (`metro-master` reste un alias) ;
 2. `python scripts/run_metro_master.py` depuis la compétence installée ;
 3. définir `METRO_MASTER_PROJECT_ROOT` vers la racine du dépôt ;
 4. passer `--project-root CHEMIN` au pont portable.
@@ -21,7 +21,7 @@ py -m venv .venv
 .venv\Scripts\python.exe -m unittest discover -s tests -t . -q
 ```
 
-Version de projet attendue : `0.9.2`. Le nom public est `metrology-lab-ai` / `metrology_lab_ai`; `metro-master` / `metro_master` restent des alias compatibles. Chaque livraison de maturation incrémente uniquement le correctif (`0.9.0` → `0.9.1` → `0.9.2`). Le passage à `1.0.0` exige une décision explicite de maturité ; une compétence améliorée ne l'annonce jamais automatiquement.
+Version de projet attendue : `0.9.3`. La distribution PyPI, la commande et le paquet publics sont `metrology-lab-ai` / `metrology_lab_ai`; `metro-master` / `metro_master` restent des alias compatibles pour la CLI et les imports.
 
 ## Appels utiles
 
