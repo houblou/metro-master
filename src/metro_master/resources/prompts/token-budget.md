@@ -5,7 +5,7 @@ Le budget de tokens est une limite de sécurité, jamais une cible à consommer.
 ## Règles obligatoires
 
 1. Commencer par le minimum suffisant : cadrage, routage, calcul déterministe, conclusion et audit.
-2. Ne jamais charger les treize prompts, toute la bibliothèque ou tous les PDF par défaut.
+2. Ne jamais charger les quatorze prompts, toute la bibliothèque ou tous les PDF par défaut.
 3. Charger un seul rôle spécialisé à la fois et uniquement les extraits documentaires utiles à sa tâche.
 4. Préférer un tableau compact, un JSON structuré ou un pointeur de preuve à la répétition d'un texte déjà présent.
 5. Ne pas répéter la demande, les sorties précédentes ni les avertissements communs sauf si leur absence rendrait la conclusion ambiguë.

@@ -104,6 +104,7 @@ Le routeur propose un plan ; vous devez encore vérifier qu'il est proportionné
 - `METRO-COMPARE` : banc/référence, transfert, corrélations et écart.
 - `CALIB-EXPERT` : correction, certificat, périodicité et hors tolérance.
 - `DATA-METRO` : données, plan expérimental, dérive et diagnostics statistiques.
+- `UNCERTAINTY-ANALYST` : Ishikawa, équation, évaluations Type A/B et note traçable.
 - `MODEL-COMPILER` : nombres extraits d'un texte libre vers requête JSON prouvée.
 - `GUM-EXPERT` : budget, distributions, sensibilités et covariances.
 - `NORM-EXPERT` : applicabilité normative, accréditation ou règle de décision.
@@ -112,7 +113,7 @@ Le routeur propose un plan ; vous devez encore vérifier qu'il est proportionné
 - `MODULE-BUILDER` : capacité manquante proposée comme candidate.
 - `METRO-AUDIT` : conclusion finale indépendante.
 
-Ne jamais charger tous les rôles par habitude. Pour une comparaison complète, le parcours de référence est : `THEORIA -> PHYS-METRO -> METRO-COMPARE -> CALIB-EXPERT si nécessaire -> DATA-METRO -> MODEL-COMPILER -> GUM-EXPERT -> NORM-EXPERT si nécessaire -> METRO-AUDIT`. Le budget actif peut retirer les rôles les moins prioritaires ; cette réduction doit apparaître dans le rapport de tokens.
+Ne jamais charger tous les rôles par habitude. Pour une comparaison complète, le parcours de référence est : `THEORIA -> PHYS-METRO -> METRO-COMPARE -> CALIB-EXPERT si nécessaire -> DATA-METRO -> GUM-EXPERT -> MODEL-COMPILER -> NORM-EXPERT si nécessaire -> METRO-AUDIT`. Pour un bilan complet : `THEORIA -> PHYS-METRO -> DATA-METRO -> UNCERTAINTY-ANALYST -> GUM-EXPERT -> MODEL-COMPILER -> METRO-AUDIT`. Le budget actif peut retirer les rôles les moins prioritaires ; cette réduction doit apparaître dans le rapport de tokens.
 
 ## Procédure d'exécution
 
@@ -134,7 +135,7 @@ Rechercher les étalons, corrections, logiciels, environnements, constantes et t
 
 ### Phase 5 — Calcul déterministe
 
-Construire la requête JSON uniquement avec des valeurs fournies ou prouvées. Exécuter `budget`, `compare`, `paired`, `separate` ou un module validé. Ne pas corriger mentalement une sortie du moteur. En cas de rejet, conserver l'erreur et corriger l'entrée ou conclure `incomplete`.
+Construire la requête JSON uniquement avec des valeurs fournies ou prouvées. Pour un bilan complet, faire organiser les quatre étapes par `UNCERTAINTY-ANALYST`, puis exécuter `uncertainty-study`. Pour un calcul élémentaire, utiliser `budget`, `compare`, `paired`, `separate` ou un module validé. Ne pas corriger mentalement une sortie du moteur. En cas de rejet, conserver l'erreur et corriger l'entrée ou conclure `incomplete`.
 
 ### Phase 6 — Contrôles
 

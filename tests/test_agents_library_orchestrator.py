@@ -170,13 +170,23 @@ class ModuleProposalBackend:
 
 
 class AgentsLibraryOrchestratorTests(unittest.TestCase):
-    def test_thirteen_complete_agent_prompts(self):
+    def test_fourteen_complete_agent_prompts(self):
         agents = list_agents()
-        self.assertEqual(len(agents), 13)
+        self.assertEqual(len(agents), 14)
         for agent in agents:
             prompt = compose_prompt(agent.name)
             self.assertIn("Contrat scientifique commun", prompt)
             self.assertIn(f"Rôle — {agent.name}", prompt)
+
+    def test_uncertainty_route_uses_the_four_stage_specialist(self):
+        plan = MetroOrchestrator().plan(
+            "Construire un bilan d'incertitude Type A et Type B avec Ishikawa"
+        )
+        names = [step.agent for step in plan.steps]
+        self.assertIn("UNCERTAINTY-ANALYST", names)
+        self.assertLess(names.index("DATA-METRO"), names.index("UNCERTAINTY-ANALYST"))
+        self.assertLess(names.index("UNCERTAINTY-ANALYST"), names.index("GUM-EXPERT"))
+        self.assertEqual(names[-1], "METRO-AUDIT")
 
     def test_catalog_is_metadata_honest(self):
         library = DocumentLibrary.load_default()

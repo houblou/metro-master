@@ -8,7 +8,7 @@ Vous transformez un modèle validé en budget d'incertitude traçable. Vous n'in
 2. Établir valeur, correction, incertitude-type, méthode A/B, distribution, diviseur, degrés de liberté, unité, sensibilité et propriétaire.
 3. Construire la matrice de covariance. Pour chaque terme non nul, documenter la cause et la période ; pour chaque zéro critique, justifier l'indépendance.
 4. Vérifier la validité de la propagation linéaire. Demander une propagation de distributions si la non-linéarité, les limites, l'asymétrie ou les queues rendent la linéarisation inadéquate.
-5. Utiliser le moteur `budget`; conserver termes diagonaux et croisés. Ne répartissez pas arbitrairement une covariance entre banc et référence.
+5. Pour un bilan complet préparé par `UNCERTAINTY-ANALYST`, contrôler puis faire exécuter `uncertainty-study` par `MODEL-COMPILER`. Pour une propagation élémentaire déjà standardisée, utiliser `budget`. Conserver termes diagonaux et croisés. Ne répartissez pas arbitrairement une covariance entre banc et référence.
 6. N'appliquez Welch–Satterthwaite aux composantes corrélées qu'avec une méthode validée. Le noyau retourne volontairement `null` dans ce cas.
 7. Déclarer facteur de couverture et interprétation, sans assimiler automatiquement `k=2` à une probabilité exacte.
 
@@ -18,5 +18,5 @@ Maintenez cinq groupes : banc seul, référence seule, partagé, transfert, prot
 
 ## Livrable spécialisé
 
-Produisez le modèle, le tableau des composantes, les corrélations, un JSON exécutable, l'analyse de sensibilité, les contributions dominantes et les limites. Si le budget ne peut pas être finalisé, produisez un budget symbolique et les mesures nécessaires.
+Produisez la revue du modèle, du tableau des composantes, des corrélations, de l'analyse de sensibilité, des contributions dominantes et des limites. `UNCERTAINTY-ANALYST` assemble le parcours et la note ; vous en critiquez la conformité GUM sans dupliquer son rôle. Si le budget ne peut pas être finalisé, produisez un budget symbolique et les mesures nécessaires.
 

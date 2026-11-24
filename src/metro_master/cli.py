@@ -21,6 +21,8 @@ from .rag import HybridRagRetriever
 from .reporting import REPORT_KINDS, render_study_report
 from .study_history import StudyStore
 from .token_budget import TokenBudgetPolicy
+from .uncertainty_oracles import verify_with_external_oracles
+from .uncertainty_study import build_uncertainty_study
 
 
 def _configure_utf8_streams() -> None:
@@ -54,6 +56,16 @@ def _write_trace(path: str | None, record: object) -> None:
         json.dumps(trace.to_dict(), ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
+
+
+def _write_new_text(path: str | None, value: str, *, label: str) -> None:
+    if path is None:
+        return
+    destination = Path(path)
+    if destination.exists():
+        raise FileExistsError(f"{label} output already exists: {destination}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(value, encoding="utf-8")
 
 
 def _parser(prog: str = "metro-master") -> argparse.ArgumentParser:
@@ -130,6 +142,20 @@ def _parser(prog: str = "metro-master") -> argparse.ArgumentParser:
     )
     separate.add_argument("input")
     separate.add_argument("--trace-out")
+
+    uncertainty_study = sub.add_parser(
+        "uncertainty-study",
+        help="exécuter le parcours GUM en quatre étapes et produire une note LaTeX",
+    )
+    uncertainty_study.add_argument("input")
+    uncertainty_study.add_argument("--trace-out")
+    uncertainty_study.add_argument("--note-out")
+
+    uncertainty_verify = sub.add_parser(
+        "uncertainty-verify",
+        help="contre-vérifier un bilan avec les bibliothèques optionnelles",
+    )
+    uncertainty_verify.add_argument("input")
 
     module_list = sub.add_parser(
         "module-list", help="lister les modules natifs et les modules gouvernés"
@@ -290,14 +316,46 @@ def main(argv: list[str] | None = None, *, prog: str = "metro-master") -> int:
             if selected is None:
                 raise ValueError(f"chunk {args.chunk} is outside the document")
             _dump(selected.to_dict())
-        elif args.command in {"budget", "compare", "paired", "separate"}:
+        elif args.command in {
+            "budget",
+            "compare",
+            "paired",
+            "separate",
+            "uncertainty-study",
+        }:
             payload = _load_json(args.input)
             request = CalculationRequest("cli", args.command, payload)
+            if (
+                args.command == "uncertainty-study"
+                and args.note_out is not None
+                and Path(args.note_out).exists()
+            ):
+                raise FileExistsError(f"note output already exists: {args.note_out}")
             record = engine.execute(request, execution_origin="cli:structured_input")
             _write_trace(args.trace_out, record)
+            if args.command == "uncertainty-study" and record.status == "ok":
+                _write_new_text(
+                    args.note_out,
+                    str(record.result["latex_note"]),
+                    label="note",
+                )
             _dump(record.to_dict())
             if record.status != "ok":
                 print(f"error: {record.error}", file=sys.stderr)
+                return 2
+        elif args.command == "uncertainty-verify":
+            study = build_uncertainty_study(_load_json(args.input))
+            checks = verify_with_external_oracles(study)
+            _dump(
+                {
+                    "expected_combined_standard_uncertainty": (
+                        study.budget.combined_standard_uncertainty
+                    ),
+                    "unit": study.budget.unit,
+                    "oracles": [item.to_dict() for item in checks],
+                }
+            )
+            if any(item.status == "mismatch" for item in checks):
                 return 2
         elif args.command == "module-list":
             store = ModuleStore(args.root, reserved_ids=BUILTIN_OPERATIONS)

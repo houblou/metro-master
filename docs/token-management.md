@@ -20,9 +20,9 @@ Cette séparation permet de modifier la personnalité et le workflow sans change
 
 | Profil | Usage | Plafond estimé | Sortie maximale par appel | Tours agents maximum | Réserve audit |
 |---|---|---:|---:|---:|---:|
-| `eco` | question ciblée, contrôle rapide | 24 000 | 1 000 | 6 | 5 000 |
-| `standard` | étude métrologique habituelle | 80 000 | 2 500 | 10 | 12 000 |
-| `deep` | dossier complexe explicitement demandé | 180 000 | 5 000 | 13 | 25 000 |
+| `eco` | question ciblée, contrôle rapide | 24 000 | 1 000 | 7 | 5 000 |
+| `standard` | étude métrologique habituelle | 80 000 | 2 500 | 11 | 12 000 |
+| `deep` | dossier complexe explicitement demandé | 180 000 | 5 000 | 14 | 25 000 |
 
 Les nombres sont des plafonds conservateurs pour une étude complète, pas des objectifs de consommation.
 

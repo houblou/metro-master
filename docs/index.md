@@ -7,7 +7,7 @@ description: MetrologyLab AI aide à construire des bilans d'incertitude traçab
 
 **Assistant métrologique open source en français pour les bilans d'incertitude, les comparaisons, l'étalonnage et les rapports auditables.**
 
-MetrologyLab AI associe un skill Agent Skills, treize rôles spécialisés et un moteur Python déterministe. Il s'adresse aux laboratoires, ingénieurs, qualiticiens et étudiants qui veulent utiliser une IA sans lui déléguer silencieusement les calculs. Les données sources, les hypothèses, le raisonnement assisté et les résultats numériques restent séparés et traçables.
+MetrologyLab AI associe un skill Agent Skills, quatorze rôles spécialisés et un moteur Python déterministe. Il s'adresse aux laboratoires, ingénieurs, qualiticiens et étudiants qui veulent utiliser une IA sans lui déléguer silencieusement les calculs. Les données sources, les hypothèses, le raisonnement assisté et les résultats numériques restent séparés et traçables.
 
 Le projet est disponible sous licence Apache-2.0. Le paquet Python s'installe depuis PyPI et le skill peut être utilisé avec ChatGPT, Codex, Claude Code ou un orchestrateur Python.
 

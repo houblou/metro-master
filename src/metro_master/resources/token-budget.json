@@ -6,7 +6,7 @@
       "max_input_tokens_per_call": 6000,
       "max_output_tokens_per_call": 1000,
       "final_audit_reserve_tokens": 5000,
-      "max_agent_turns": 6,
+      "max_agent_turns": 7,
       "max_context_response_tokens": 500,
       "max_knowledge_hit_tokens": 350
     },
@@ -15,7 +15,7 @@
       "max_input_tokens_per_call": 12000,
       "max_output_tokens_per_call": 2500,
       "final_audit_reserve_tokens": 12000,
-      "max_agent_turns": 10,
+      "max_agent_turns": 11,
       "max_context_response_tokens": 1000,
       "max_knowledge_hit_tokens": 750
     },
@@ -24,7 +24,7 @@
       "max_input_tokens_per_call": 24000,
       "max_output_tokens_per_call": 5000,
       "final_audit_reserve_tokens": 25000,
-      "max_agent_turns": 13,
+      "max_agent_turns": 14,
       "max_context_response_tokens": 2000,
       "max_knowledge_hit_tokens": 1500
     }

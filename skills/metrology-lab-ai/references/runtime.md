@@ -21,7 +21,7 @@ py -m venv .venv
 .venv\Scripts\python.exe -m unittest discover -s tests -t . -q
 ```
 
-Version de projet attendue : `0.9.5`. La distribution PyPI, la commande et le paquet publics sont `metrology-lab-ai` / `metrology_lab_ai`; `metro-master` / `metro_master` restent des alias compatibles pour la CLI et les imports.
+Version de projet attendue : `0.9.6`. La distribution PyPI, la commande et le paquet publics sont `metrology-lab-ai` / `metrology_lab_ai`; `metro-master` / `metro_master` restent des alias compatibles pour la CLI et les imports.
 
 ## Appels utiles
 
@@ -35,6 +35,8 @@ py scripts\run_metro_master.py prompt DATA-METRO --token-mode standard
 py scripts\run_metro_master.py library --query "gauge R&R"
 py scripts\run_metro_master.py pdf-search --query "JCGM 100"
 py scripts\run_metro_master.py budget examples\budget_correlated.json
+py scripts\run_metro_master.py uncertainty-study CHEMIN\study.json --trace-out CHEMIN\trace.json --note-out CHEMIN\note.md
+py scripts\run_metro_master.py uncertainty-verify CHEMIN\study.json
 py scripts\run_metro_master.py study-list
 ```
 

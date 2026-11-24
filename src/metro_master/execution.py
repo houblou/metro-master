@@ -27,6 +27,7 @@ from .module_registry import (
 from .research import MAX_RESEARCH_REQUESTS_PER_TURN, ResearchRequest
 from .trace import CalculationTrace, build_calculation_trace
 from .uncertainty import propagate_linear
+from .uncertainty_study import build_uncertainty_study
 from .validation import require_correlation, require_nonzero_justification, require_text
 
 
@@ -299,6 +300,12 @@ class DeterministicEngine:
             NativeCalculationModule("compare", "1.0.0", "Correlated comparison", self._compare),
             NativeCalculationModule("paired", "1.0.0", "Paired observations", self._paired),
             NativeCalculationModule("separate", "1.0.0", "Conditional bench separation", self._separate),
+            NativeCalculationModule(
+                "uncertainty-study",
+                "1.0.0",
+                "Four-stage GUM uncertainty study",
+                self._uncertainty_study,
+            ),
         )
         for module in native_modules:
             self.registry.register(module)
@@ -464,6 +471,10 @@ class DeterministicEngine:
             output_unit=payload.get("output_unit"),
         ).to_dict()
         return result
+
+    @staticmethod
+    def _uncertainty_study(payload: dict[str, Any]) -> dict[str, object]:
+        return build_uncertainty_study(payload).to_dict()
 
     @staticmethod
     def _compare(payload: dict[str, Any]) -> dict[str, object]:
@@ -662,7 +673,63 @@ def _excerpt_contains_value(excerpt: str, expected: object) -> bool:
 
 def _require_explicit_compiled_fields(request: CalculationRequest) -> None:
     payload = request.payload
-    if request.operation == "budget":
+    if request.operation == "uncertainty-study":
+        required_payload = {
+            "model",
+            "influences",
+            "type_a",
+            "type_b",
+            "correlations",
+            "coverage_factor",
+            "coverage_justification",
+            "correlation_justification",
+            "propagation_justification",
+        }
+        missing_payload = required_payload - set(payload)
+        if missing_payload:
+            raise ProvenanceValidationError(
+                "compiled uncertainty study must explicitly declare: "
+                + ", ".join(sorted(missing_payload))
+            )
+        model = payload.get("model")
+        if not isinstance(model, dict):
+            raise ProvenanceValidationError(
+                "compiled uncertainty study requires an explicit model object"
+            )
+        if (
+            not isinstance(model.get("output_unit"), str)
+            or not model["output_unit"].strip()
+        ):
+            raise ProvenanceValidationError(
+                "compiled uncertainty study requires a non-empty model output_unit"
+            )
+        influences = payload.get("influences")
+        if not isinstance(influences, list) or not influences:
+            raise ProvenanceValidationError(
+                "compiled uncertainty study requires an explicit Ishikawa register"
+            )
+        type_a = payload.get("type_a")
+        type_b = payload.get("type_b")
+        if not isinstance(type_a, list) or not isinstance(type_b, list):
+            raise ProvenanceValidationError(
+                "compiled uncertainty study type_a and type_b must be explicit arrays"
+            )
+        if not type_a and not type_b:
+            raise ProvenanceValidationError(
+                "compiled uncertainty study requires at least one evaluated component"
+            )
+        correlations = payload.get("correlations")
+        if not isinstance(correlations, list):
+            raise ProvenanceValidationError(
+                "compiled uncertainty study correlations must be an explicit array"
+            )
+        if not correlations and not any(
+            "correl" in assumption.casefold() for assumption in request.assumptions
+        ):
+            raise ProvenanceValidationError(
+                "an empty uncertainty-study correlation model requires an explicit assumption"
+            )
+    elif request.operation == "budget":
         required_payload = {
             "components",
             "correlations",

@@ -13,12 +13,13 @@ AGENT_ORDER = (
     "PDF-EXTRACTOR",
     "WEB-RESEARCHER",
     "THEORIA",
-    "GUM-EXPERT",
+    "PHYS-METRO",
     "METRO-COMPARE",
     "CALIB-EXPERT",
     "DATA-METRO",
+    "UNCERTAINTY-ANALYST",
+    "GUM-EXPERT",
     "MODEL-COMPILER",
-    "PHYS-METRO",
     "NORM-EXPERT",
     "MODULE-BUILDER",
     "METRO-AUDIT",
@@ -60,6 +61,11 @@ AGENTS = {
     ),
     "DATA-METRO": AgentSpec(
         "DATA-METRO", "Statistiques, plans d'expérience et diagnostics", "data-metro.md"
+    ),
+    "UNCERTAINTY-ANALYST": AgentSpec(
+        "UNCERTAINTY-ANALYST",
+        "Parcours Ishikawa, modèle, Type A/B et composition traçable",
+        "uncertainty-analyst.md",
     ),
     "MODEL-COMPILER": AgentSpec(
         "MODEL-COMPILER",

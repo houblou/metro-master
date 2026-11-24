@@ -213,6 +213,16 @@ class RuleBasedRouter:
             "score zêta",
             "score zeta",
         )
+        uncertainty_tokens = (
+            "incertitude",
+            "bilan",
+            "type a",
+            "type b",
+            "ishikawa",
+            "composée",
+            "composee",
+            "gum",
+        )
         physics_tokens = (
             "pression",
             "temp",
@@ -245,6 +255,17 @@ class RuleBasedRouter:
         if any(token in lowered for token in data_tokens) or "METRO-COMPARE" in selected:
             selected["DATA-METRO"] = "analyser les données et le plan expérimental"
 
+        if any(token in lowered for token in uncertainty_tokens):
+            selected["PHYS-METRO"] = (
+                "identifier la chaîne physique et les grandeurs d’influence du bilan"
+            )
+            selected["DATA-METRO"] = (
+                "qualifier les données Type A, leur plan et leurs hypothèses statistiques"
+            )
+            selected["UNCERTAINTY-ANALYST"] = (
+                "conduire le parcours Ishikawa, modèle, Type A/B et composition"
+            )
+
         if any(token in lowered for token in calculation_tokens) or "METRO-COMPARE" in selected:
             selected["MODEL-COMPILER"] = (
                 "compiler les valeurs du texte en requêtes traçables et vérifiables"
@@ -268,8 +289,9 @@ class RuleBasedRouter:
             "METRO-COMPARE",
             "CALIB-EXPERT",
             "DATA-METRO",
-            "MODEL-COMPILER",
+            "UNCERTAINTY-ANALYST",
             "GUM-EXPERT",
+            "MODEL-COMPILER",
             "NORM-EXPERT",
             "MODULE-BUILDER",
             "METRO-AUDIT",

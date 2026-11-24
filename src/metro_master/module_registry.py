@@ -21,7 +21,9 @@ MODULE_ID_PATTERN = re.compile(r"^[a-z][a-z0-9_-]{1,63}$")
 VERSION_PATTERN = re.compile(r"^\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?$")
 INPUT_NAME_PATTERN = re.compile(r"^[A-Za-z][A-Za-z0-9_]{0,63}$")
 VALID_STATUSES = {"candidate", "validated", "deprecated"}
-CORE_RESERVED_MODULE_IDS = frozenset({"budget", "compare", "paired", "separate"})
+CORE_RESERVED_MODULE_IDS = frozenset(
+    {"budget", "compare", "paired", "separate", "uncertainty-study"}
+)
 MAX_EXPRESSION_LENGTH = 2_000
 MAX_AST_NODES = 256
 UnitSignature = dict[str, int]

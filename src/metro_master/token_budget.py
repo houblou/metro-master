@@ -120,6 +120,7 @@ class TokenBudgetPolicy:
             "PDF-EXTRACTOR": 940,
             "WEB-RESEARCHER": 940,
             "THEORIA": 920,
+            "UNCERTAINTY-ANALYST": 915,
             "MODEL-COMPILER": 910,
             "GUM-EXPERT": 900,
             "METRO-COMPARE": 890,

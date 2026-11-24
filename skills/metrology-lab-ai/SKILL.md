@@ -3,7 +3,7 @@ name: metrology-lab-ai
 description: Piloter en français une étude métrologique avec cadrage du mesurande, budgets d'incertitude, comparaisons, étalonnages, statistiques d'ingénierie, reprise de dossier et rapport auditable. Utiliser pour analyser ou poursuivre un travail de métrologie avec MetrologyLab AI et son moteur Python compatible metro-master. Ne remplace pas un certificat signé ni une décision d'accréditation.
 license: Apache-2.0
 metadata:
-  version: "0.9.5"
+  version: "0.9.6"
   language: "fr"
 ---
 
@@ -15,7 +15,8 @@ Lire [l'intégration portable](references/runtime.md) avant le premier appel du 
 
 - pour EDA, caractérisation du processus de mesure, R&R, régression, DOE, SPC, capabilité, comparaisons statistiques ou fiabilité, lire [les méthodes statistiques NIST en français](references/statistiques-nist-fr.md) ;
 - pour créer, reprendre ou auditer un rapport métrologique existant, lire [le workflow de rapport en français](references/rapport-metrologique-fr.md) ;
-- ne pas charger ces deux références si la question est simple et autonome.
+- pour construire un bilan complet d'incertitude, lire [le parcours GUM en quatre étapes](references/bilan-incertitude-fr.md) ;
+- ne pas charger ces références si la question est simple et autonome.
 
 ## Contrat essentiel
 
@@ -41,6 +42,7 @@ Choisir uniquement les rôles utiles parmi :
 - `METRO-COMPARE` pour banc, référence, transfert et covariances ;
 - `CALIB-EXPERT` pour corrections, traçabilité, dérive et périodicité ;
 - `DATA-METRO` pour EDA, modèles statistiques, plans d'expérience et diagnostics ;
+- `UNCERTAINTY-ANALYST` pour Ishikawa, équation de mesure, Type A/B et composition ;
 - `MODEL-COMPILER` pour transformer un texte libre en entrées prouvées ;
 - `GUM-EXPERT` pour le budget, les distributions et les corrélations ;
 - `NORM-EXPERT` pour le statut normatif ou l'accréditation ;
@@ -49,11 +51,11 @@ Choisir uniquement les rôles utiles parmi :
 - `MODULE-BUILDER` pour une capacité manquante, uniquement comme candidate ;
 - `METRO-AUDIT` pour la revue finale.
 
-Ne jamais charger les treize prompts ensemble. Utiliser `eco`, `standard` ou `deep` selon la complexité et préserver la réserve de tokens de l'audit.
+Ne jamais charger les quatorze prompts ensemble. Utiliser `eco`, `standard` ou `deep` selon la complexité et préserver la réserve de tokens de l'audit.
 
 ## Calculs
 
-Construire les entrées JSON uniquement avec des valeurs fournies ou prouvées. Utiliser le moteur pour `budget`, `compare`, `paired`, `separate` et les modules gouvernés actifs. Rendre visibles unités, distributions, sensibilités, corrélations, justification, provenance et refus. Pour chaque budget compilé, renseigner l'unité de la grandeur d'entrée (`unit`), celle du coefficient (`sensitivity_unit`) et l'unité du mesurande (`output_unit`) ; vérifier `unit × sensitivity_unit = output_unit` dimensionnellement.
+Construire les entrées JSON uniquement avec des valeurs fournies ou prouvées. Utiliser le moteur pour `uncertainty-study`, `budget`, `compare`, `paired`, `separate` et les modules gouvernés actifs. Rendre visibles unités, distributions, sensibilités, corrélations, justification, provenance et refus. Pour chaque budget compilé, renseigner l'unité de la grandeur d'entrée (`unit`), celle du coefficient (`sensitivity_unit`) et l'unité du mesurande (`output_unit`) ; vérifier `unit × sensitivity_unit = output_unit` dimensionnellement.
 
 Pour `d = x_banc - x_reference`, appliquer :
 

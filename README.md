@@ -5,7 +5,7 @@
 [![Tests](https://github.com/houblou/metrology-lab-ai/actions/workflows/tests.yml/badge.svg)](https://github.com/houblou/metrology-lab-ai/actions/workflows/tests.yml)
 [![License](https://img.shields.io/github/license/houblou/metrology-lab-ai)](LICENSE)
 
-MetrologyLab AI est un assistant métrologique Python open source, distribué sous licence Apache-2.0, pour construire des bilans d'incertitude traçables, comparer des moyens de mesure et préparer des rapports auditables. Il associe ChatGPT ou un autre LLM à treize agents spécialisés, un RAG vectoriel gouverné, une recherche Internet traçable, un registre d'études persistant et un noyau de calcul déterministe extensible. Sa priorité est la caractérisation d'un banc par comparaison : il conserve séparément l'incertitude du banc, celle de la référence, les effets partagés/corrélés et l'incertitude propre au protocole de comparaison.
+MetrologyLab AI est un assistant métrologique Python open source, distribué sous licence Apache-2.0, pour construire des bilans d'incertitude traçables, comparer des moyens de mesure et préparer des rapports auditables. Il associe ChatGPT ou un autre LLM à quatorze agents spécialisés, un RAG vectoriel gouverné, une recherche Internet traçable, un registre d'études persistant et un noyau de calcul déterministe extensible. Sa priorité est la caractérisation d'un banc par comparaison : il conserve séparément l'incertitude du banc, celle de la référence, les effets partagés/corrélés et l'incertitude propre au protocole de comparaison.
 
 Le nom public est cohérent de bout en bout : distribution PyPI et projet **MetrologyLab AI**, paquet importable `metrology_lab_ai` et commande `metrology-lab-ai`. Le module et la commande historiques `metro_master` / `metro-master`, ainsi que le rôle interne `METRO-MASTER`, restent disponibles afin de ne pas casser les intégrations existantes.
 
@@ -13,12 +13,13 @@ Le projet ne contient le texte intégral d'aucune norme ISO ni d'aucun article p
 
 ## Ce qui est livré
 
-- treize rôles : `METRO-MASTER`, `PDF-EXTRACTOR`, `WEB-RESEARCHER`, `THEORIA`, `GUM-EXPERT`, `METRO-COMPARE`, `CALIB-EXPERT`, `DATA-METRO`, `MODEL-COMPILER`, `PHYS-METRO`, `NORM-EXPERT`, `MODULE-BUILDER`, `METRO-AUDIT` ;
+- quatorze rôles : `METRO-MASTER`, `PDF-EXTRACTOR`, `WEB-RESEARCHER`, `THEORIA`, `PHYS-METRO`, `DATA-METRO`, `UNCERTAINTY-ANALYST`, `GUM-EXPERT`, `MODEL-COMPILER`, `METRO-COMPARE`, `CALIB-EXPERT`, `NORM-EXPERT`, `MODULE-BUILDER`, `METRO-AUDIT` ;
 - la compétence Codex portable `skills/expert-theorie-mesure`, importée et utilisée comme socle renforcé de THEORIA ;
 - un contrat scientifique commun et des instructions spécialisées composables en prompts complets ;
 - un prompt maître Markdown directement modifiable et trois profils de budget de tokens ;
 - un catalogue documentaire structuré JCGM/BIPM, ISO, ILAC, EA et EURAMET ;
 - propagation linéaire avec unités de sensibilité typées, conversions dimensionnelles, matrice de corrélation, contributions de covariance, incertitude élargie et Welch–Satterthwaite lorsque les composantes à degrés de liberté finis restent indépendantes ;
+- parcours complet `uncertainty-study` en quatre étapes : Ishikawa, équation de mesure, évaluations Type A/B, composition et note Markdown/LaTeX traçable ;
 - calcul d'écart corrélé, score zêta, erreur normalisée, statistiques de paires et séparation conditionnelle de la variance du banc ;
 - un orchestrateur Python indépendant du fournisseur de modèle ;
 - un contrat `ResearchProvider` pour mener jusqu'à trois passes Web, filtrer les domaines et privilégier les sources officielles/primaires ;
@@ -128,6 +129,18 @@ metrology-lab-ai separate examples\separation_conditional.json
 ```
 
 Les commandes de calcul rendent toujours l'enveloppe complète `CalculationRecord`, y compris la trace. `--trace-out` écrit séparément cette trace et refuse d'écraser un fichier existant.
+
+Construire un bilan complet en quatre étapes, générer la note Markdown/LaTeX et vérifier le résultat avec les oracles optionnels :
+
+```powershell
+metrology-lab-ai uncertainty-study examples\uncertainty_study.json `
+  --trace-out traces\uncertainty-study.json `
+  --note-out traces\uncertainty-note.md
+python -m pip install ".[verification]"
+metrology-lab-ai uncertainty-verify examples\uncertainty_study.json
+```
+
+Le moteur interne reste la source de vérité. `GTC` et `uncertainties` effectuent deux recompositions indépendantes ; une absence est signalée comme `unavailable` et une divergence comme `mismatch`.
 
 Interroger le catalogue :
 

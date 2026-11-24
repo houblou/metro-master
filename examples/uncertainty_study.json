@@ -1,0 +1,83 @@
+{
+  "model": {
+    "measurand": "longueur corrigée",
+    "symbol": "L",
+    "output_unit": "mm",
+    "equation_latex": "L = x + c_{res}",
+    "decision": "exprimer la longueur et son incertitude élargie",
+    "conditions": "trois répétitions à température stabilisée",
+    "variables": [
+      {
+        "symbol": "x",
+        "name": "moyenne des lectures",
+        "unit": "mm",
+        "description": "moyenne arithmétique des répétitions",
+        "estimate": 10.0
+      },
+      {
+        "symbol": "c_{res}",
+        "name": "correction de résolution",
+        "unit": "mm",
+        "description": "correction centrée associée à l'arrondi",
+        "estimate": 0.0
+      }
+    ]
+  },
+  "influences": [
+    {
+      "id": "method-repeatability",
+      "category": "method",
+      "description": "dispersion des lectures répétées",
+      "treatment": "component",
+      "component_name": "repeatability",
+      "justification": "évaluée à partir de la série complète",
+      "source_ref": "observations de l'étude"
+    },
+    {
+      "id": "means-resolution",
+      "category": "means",
+      "description": "arrondi de l'afficheur au pas de 0,02 mm",
+      "treatment": "component",
+      "component_name": "resolution",
+      "justification": "pas de quantification documenté",
+      "source_ref": "spécification de l'instrument"
+    }
+  ],
+  "type_a": [
+    {
+      "name": "repeatability",
+      "observations": [9.9, 10.0, 10.1],
+      "unit": "mm",
+      "sensitivity": 1.0,
+      "sensitivity_unit": "1",
+      "owner": "bench",
+      "source": "observations de l'étude",
+      "conditions": "même opérateur, même montage et température stabilisée",
+      "independence_justification": "lectures successives réinitialisées sans filtrage partagé",
+      "sensitivity_justification": "la dérivée partielle de L par rapport à x vaut 1",
+      "notes": "série illustrative"
+    }
+  ],
+  "type_b": [
+    {
+      "name": "resolution",
+      "value": 0.02,
+      "value_kind": "resolution_step",
+      "distribution": "rectangular",
+      "distribution_justification": "erreur d'arrondi supposée équiprobable dans un pas",
+      "unit": "mm",
+      "sensitivity": 1.0,
+      "sensitivity_unit": "1",
+      "owner": "bench",
+      "source": "spécification de l'instrument",
+      "degrees_of_freedom": null,
+      "sensitivity_justification": "la dérivée partielle de L par rapport à c_res vaut 1",
+      "notes": "pas complet de l'afficheur"
+    }
+  ],
+  "correlations": [],
+  "correlation_justification": "aucune source, correction ou acquisition commune n'est identifiée entre la répétabilité de la moyenne et l'arrondi de résolution",
+  "propagation_justification": "le modèle est additif et linéaire avec des coefficients de sensibilité constants sur le domaine étudié",
+  "coverage_factor": 2.0,
+  "coverage_justification": "facteur déclaré pour l'exemple ; le niveau de couverture doit être confirmé"
+}

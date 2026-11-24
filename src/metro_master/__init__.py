@@ -44,6 +44,13 @@ from .study_history import StudyStore
 from .token_budget import TokenBudgetExceeded, TokenBudgetPolicy, estimate_tokens
 from .trace import CalculationTrace
 from .uncertainty import propagate_linear
+from .uncertainty_oracles import OracleResult, verify_with_external_oracles
+from .uncertainty_study import (
+    UncertaintyStudyResult,
+    build_uncertainty_study,
+    evaluate_type_a,
+    evaluate_type_b,
+)
 from .version import __version__
 
 __all__ = [
@@ -60,6 +67,7 @@ __all__ = [
     "InputEvidence",
     "ModuleRegistry",
     "ModuleStore",
+    "OracleResult",
     "PdfPageChunk",
     "PintQuantityAdapter",
     "CallableResearchProvider",
@@ -74,6 +82,8 @@ __all__ = [
     "TokenBudgetExceeded",
     "TokenBudgetPolicy",
     "UncertaintyComponent",
+    "UncertaintyStudyResult",
+    "build_uncertainty_study",
     "compare_results",
     "compatible_units",
     "convert_standard_uncertainty",
@@ -84,5 +94,8 @@ __all__ = [
     "separate_bench_uncertainty",
     "zeta_score",
     "estimate_tokens",
+    "evaluate_type_a",
+    "evaluate_type_b",
+    "verify_with_external_oracles",
 ]
 

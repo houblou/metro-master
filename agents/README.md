@@ -13,6 +13,7 @@ metro-master prompt GUM-EXPERT
 metro-master prompt METRO-COMPARE
 metro-master prompt CALIB-EXPERT
 metro-master prompt DATA-METRO
+metro-master prompt UNCERTAINTY-ANALYST
 metro-master prompt MODEL-COMPILER
 metro-master prompt PHYS-METRO
 metro-master prompt NORM-EXPERT
