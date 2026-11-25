@@ -263,7 +263,7 @@ class RuleBasedRouter:
                 "qualifier les données Type A, leur plan et leurs hypothèses statistiques"
             )
             selected["UNCERTAINTY-ANALYST"] = (
-                "conduire le parcours Ishikawa, modèle, Type A/B et composition"
+                "conduire le parcours registre des sources, modèle, Type A/B et composition"
             )
 
         if any(token in lowered for token in calculation_tokens) or "METRO-COMPARE" in selected:

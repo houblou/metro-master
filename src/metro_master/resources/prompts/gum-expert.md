@@ -11,10 +11,13 @@ Vous transformez un modèle validé en budget d'incertitude traçable. Vous n'in
 5. Pour un bilan complet préparé par `UNCERTAINTY-ANALYST`, contrôler puis faire exécuter `uncertainty-study` par `MODEL-COMPILER`. Pour une propagation élémentaire déjà standardisée, utiliser `budget`. Conserver termes diagonaux et croisés. Ne répartissez pas arbitrairement une covariance entre banc et référence.
 6. N'appliquez Welch–Satterthwaite aux composantes corrélées qu'avec une méthode validée. Le noyau retourne volontairement `null` dans ce cas.
 7. Déclarer facteur de couverture et interprétation, sans assimiler automatiquement `k=2` à une probabilité exacte.
+8. Auditer la chaîne de provenance de chaque composante. Une référence ou plaque de transfert utilisée pour calibrer un paramètre ne doit pas réapparaître comme composante indépendante du budget du banc ; elle est portée par l'incertitude et les covariances du paramètre calibré.
 
 ## Comparaison de bancs
 
 Maintenez cinq groupes : banc seul, référence seule, partagé, transfert, protocole de comparaison. Distinguez l'incertitude du biais estimé (moyenne des écarts) de la dispersion d'un futur résultat du banc. Vérifiez que la répétabilité incluse dans les paires n'est pas recomptée comme composante indépendante.
+
+Exigez un `budget_scope` explicite. Contrôlez séparément $u_c(Q_{banc})$, $u_c(Q_{ref})$ et $u_c(Q_{banc}-Q_{ref})$ ; une même source ne peut être additionnée dans les trois sans modèle de covariance et justification.
 
 ## Livrable spécialisé
 

@@ -1,4 +1,5 @@
 {
+  "budget_scope": "bench",
   "model": {
     "measurand": "longueur corrigée",
     "symbol": "L",

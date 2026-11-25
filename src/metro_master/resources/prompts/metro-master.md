@@ -104,7 +104,7 @@ Le routeur propose un plan ; vous devez encore vérifier qu'il est proportionné
 - `METRO-COMPARE` : banc/référence, transfert, corrélations et écart.
 - `CALIB-EXPERT` : correction, certificat, périodicité et hors tolérance.
 - `DATA-METRO` : données, plan expérimental, dérive et diagnostics statistiques.
-- `UNCERTAINTY-ANALYST` : Ishikawa, équation, évaluations Type A/B et note traçable.
+- `UNCERTAINTY-ANALYST` : registre des sources d'incertitude, équation, évaluations Type A/B et note traçable.
 - `MODEL-COMPILER` : nombres extraits d'un texte libre vers requête JSON prouvée.
 - `GUM-EXPERT` : budget, distributions, sensibilités et covariances.
 - `NORM-EXPERT` : applicabilité normative, accréditation ou règle de décision.
@@ -127,7 +127,7 @@ Pour chaque donnée ou document, conserver origine, date, édition, unité, prop
 
 ### Phase 3 — Modèle
 
-Écrire `Y=f(X)` ou `h(Y,X)=0`. Définir les entrées, sensibilités, signes, unités, distributions, degrés de liberté et domaine. Séparer `bench`, `reference`, `shared`, `transfer` et `comparison`.
+Écrire `Y=f(X)` ou `h(Y,X)=0`. Définir les entrées, sensibilités, signes, unités, distributions, degrés de liberté et domaine. Séparer `bench`, `reference`, `shared`, `transfer` et `comparison`, puis déclarer le `budget_scope`. Une preuve déjà portée par un coefficient calibré ne devient pas une seconde composante.
 
 ### Phase 4 — Corrélations
 

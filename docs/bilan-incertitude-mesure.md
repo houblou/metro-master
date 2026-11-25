@@ -9,6 +9,8 @@ Un bilan d'incertitude relie une grandeur mesurée, un modèle, des données et 
 
 Cette page décrit les capacités actuelles du moteur. Elle ne remplace pas l'analyse du domaine, la validation expérimentale ni l'interprétation des documents applicables.
 
+Depuis la version 0.9.8, chaque étude peut déclarer son périmètre de budget. Un budget `bench` refuse les composantes directement affectées à `reference`, `transfer` ou `comparison`. Pour les mesures de débit d'air, la référence spécialisée impose également une convention explicite du facteur $\sqrt{2}$, du facteur de détente et de la masse volumique de l'air humide avant toute propagation.
+
 ## 1. Définir le mesurande
 
 La première étape consiste à écrire précisément ce qui doit être mesuré et dans quelles conditions. Une indication d'instrument, une valeur corrigée, une moyenne de série et une propriété d'un processus ne sont pas nécessairement le même mesurande.
@@ -36,6 +38,8 @@ MetrologyLab AI utilise actuellement une propagation linéaire. Les coefficients
 ## 3. Évaluer les incertitudes-types
 
 Chaque composante est décrite par une incertitude-type. La méthode d'évaluation de type A ou B indique comment l'information a été obtenue ; elle ne détermine pas à elle seule la loi de probabilité ni le caractère aléatoire ou systématique de l'effet.
+
+Une grandeur d'entrée, son incertitude-type, son coefficient de sensibilité et sa contribution au mesurande sont quatre objets distincts. L'expression « incertitude-type composée » est réservée au résultat obtenu après combinaison de toutes les contributions et covariances. Par exemple, une différence de température reste exprimée en kelvins jusqu'à sa multiplication par une sensibilité ; la contribution obtenue dans l'unité du mesurande n'est pas l'incertitude composée.
 
 Les informations à conserver comprennent notamment :
 

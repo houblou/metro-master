@@ -12,15 +12,17 @@ Charger cette référence uniquement pour un bilan complet. Le moteur interne re
 - `MODEL-COMPILER` transforme les seules données prouvées en payload exécutable.
 - `METRO-AUDIT` vérifie indépendamment les preuves, traces, résultats et limites.
 
-## Étape 1 — Inventaire Ishikawa
+## Étape 1 — Registre structuré des sources d’incertitude
 
-Créer un registre exhaustif des influences. Les catégories admises sont `method`, `means`, `environment`, `operator`, `object`, `measurand` et `other`. Chaque influence reçoit un identifiant, une source, une justification et un traitement :
+Créer un registre exhaustif des influences. Les catégories admises sont `method`, `means`, `environment`, `operator`, `object`, `measurand` et `other`. Elles peuvent soutenir une analyse inspirée des 5M, mais le registre tabulaire ne doit pas être appelé « diagramme d’Ishikawa ». Réserver cette appellation à une véritable représentation causes-effet en arêtes de poisson. Chaque influence reçoit un identifiant, une source, une justification et un traitement :
 
 - `component` : composante évaluée séparément ;
 - `covered` : effet déjà couvert par une composante nommée ;
 - `excluded` : effet exclu avec preuve et justification.
 
 Toute composante Type A ou Type B doit être reliée au registre. Contrôler les doubles comptes, notamment lorsque la dispersion d’une série couvre déjà plusieurs effets.
+
+Déclarer le périmètre du budget (`budget_scope`) et affecter chaque composante à `bench`, `reference`, `shared`, `transfer` ou `comparison`. Une influence documentaire déjà portée par un paramètre calibré doit être marquée `covered` par ce paramètre ; elle ne devient pas une seconde composante.
 
 ## Étape 2 — Équation de mesure
 
@@ -35,6 +37,18 @@ Pour chaque entrée, conserver symbole, nom, définition, estimation éventuelle
 $$
 [X_i]\,[c_i]=[Y]
 $$
+
+Maintenir explicitement les cinq objets suivants sans les fusionner :
+
+1. la grandeur d’entrée $X_i$ et son estimation $x_i$ ;
+2. son incertitude-type $u(x_i)$, dans l’unité de l’entrée ;
+3. le coefficient de sensibilité $c_i=\partial f/\partial x_i$ ;
+4. la contribution signée $c_i u(x_i)$, dans l’unité du mesurande ;
+5. l’incertitude-type composée $u_c(y)$, obtenue seulement après composition de toutes les contributions et covariances.
+
+Une différence de température, par exemple, est une grandeur d’entrée. Son incertitude-type s’exprime en kelvins ou en degrés Celsius, puis sa contribution au mesurande est obtenue par la sensibilité. Cette contribution individuelle n’est jamais une incertitude composée.
+
+Ne pas remplacer une entrée physique par sa contribution déjà propagée avec `sensitivity = 1`. Une telle représentation n’est tolérée que pour reproduire un tableau de référence ou comparer des logiciels, à condition de la nommer explicitement « contribution déjà propagée », de conserver la dérivation séparée et de signaler la perte de traçabilité dimensionnelle.
 
 ## Étape 3 — Évaluations Type A et Type B
 
@@ -73,7 +87,7 @@ Le facteur de couverture et son objectif sont déclarés. Ne pas assimiler autom
 
 L’opération native `uncertainty-study` produit :
 
-- un registre Ishikawa structuré ;
+- un registre structuré des sources d’incertitude ;
 - le modèle et ses symboles ;
 - les composantes Type A/B et leurs formules ;
 - les contributions signées, corrélations et termes de variance ;
@@ -81,6 +95,8 @@ L’opération native `uncertainty-study` produit :
 - une recomposition matricielle indépendante ;
 - une note française en Markdown avec calculs LaTeX explicites ;
 - une trace canonique du moteur.
+
+Le moteur refuse désormais les propriétaires incompatibles avec un périmètre explicite : un budget `bench` ne peut pas contenir directement une composante `reference`, `transfer` ou `comparison`. L’absence de `budget_scope` reste acceptée pour compatibilité, mais produit un avertissement et empêche de considérer le contrôle du double comptage comme complet.
 
 Le fichier de trace et la note doivent être écrits vers de nouveaux chemins afin d’éviter l’écrasement silencieux.
 
@@ -97,6 +113,8 @@ Installer les deux oracles compatibles avec `pip install -e ".[verification]"`. 
 ## Style de la note
 
 Pour chaque calcul, écrire dans cet ordre : définition des données et unités ; formule symbolique ; substitution numérique ; résultat ; interprétation ; contrôle. Utiliser des blocs LaTeX délimités par `$$` sur des lignes séparées. Ne jamais masquer une hypothèse, une exclusion, un avertissement du moteur ou une donnée manquante.
+
+Le tableau principal doit comporter au minimum : grandeur d’entrée ou composante, $u(x_i)$ et son unité, type d’évaluation, distribution et diviseur, $c_i$ et son unité, contribution $c_i u(x_i)$ dans l’unité du mesurande, degrés de liberté et source. Employer « composante » ou « contribution » pour une ligne individuelle et réserver « incertitude-type composée » au seul résultat $u_c(y)$.
 
 ## Sources de méthode et de vérification
 

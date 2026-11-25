@@ -18,9 +18,22 @@ from .validation import require_finite, require_non_negative, require_positive, 
 
 
 SCHEMA_VERSION = "uncertainty-study-v1"
-ISHIKAWA_CATEGORIES = frozenset(
+VALID_BUDGET_SCOPES = frozenset(
+    {"bench", "reference", "transfer", "comparison", "overall"}
+)
+BUDGET_SCOPE_OWNERS = {
+    "bench": frozenset({"bench", "shared"}),
+    "reference": frozenset({"reference", "shared"}),
+    "transfer": frozenset({"transfer", "shared"}),
+    "comparison": frozenset(VALID_OWNERS),
+    "overall": frozenset(VALID_OWNERS),
+}
+INFLUENCE_CATEGORIES = frozenset(
     {"method", "means", "environment", "operator", "object", "measurand", "other"}
 )
+# Alias public conservé pour les intégrations 0.9.6 ; le nom canonique est
+# désormais ``INFLUENCE_CATEGORIES`` car le registre n'est pas un diagramme.
+ISHIKAWA_CATEGORIES = INFLUENCE_CATEGORIES
 INFLUENCE_TREATMENTS = frozenset({"component", "covered", "excluded"})
 TYPE_B_DISTRIBUTIONS = frozenset(
     {"normal", "rectangular", "triangular", "arcsine", "unspecified"}
@@ -72,6 +85,15 @@ def _owner(value: object) -> str:
     if owner not in VALID_OWNERS:
         raise ValueError("owner must be one of: " + ", ".join(sorted(VALID_OWNERS)))
     return owner
+
+
+def _budget_scope(value: object) -> str:
+    scope = require_text("budget_scope", value)
+    if scope not in VALID_BUDGET_SCOPES:
+        raise ValueError(
+            "budget_scope must be one of: " + ", ".join(sorted(VALID_BUDGET_SCOPES))
+        )
+    return scope
 
 
 @dataclass(frozen=True, slots=True)
@@ -184,13 +206,13 @@ class InfluenceEntry:
                 "justification",
                 "source_ref",
             },
-            label="Ishikawa influence",
+            label="uncertainty influence",
         )
-        category = require_text("Ishikawa category", data["category"])
-        if category not in ISHIKAWA_CATEGORIES:
+        category = require_text("influence category", data["category"])
+        if category not in INFLUENCE_CATEGORIES:
             raise ValueError(
-                "Ishikawa category must be one of: "
-                + ", ".join(sorted(ISHIKAWA_CATEGORIES))
+                "influence category must be one of: "
+                + ", ".join(sorted(INFLUENCE_CATEGORIES))
             )
         treatment = require_text("influence treatment", data["treatment"])
         if treatment not in INFLUENCE_TREATMENTS:
@@ -274,6 +296,7 @@ class IndependentVerification:
 @dataclass(frozen=True, slots=True)
 class UncertaintyStudyResult:
     schema_version: str
+    budget_scope: str
     model: MeasurementModelSpec
     influences: tuple[InfluenceEntry, ...]
     components: tuple[EvaluatedComponent, ...]
@@ -289,7 +312,10 @@ class UncertaintyStudyResult:
     def to_dict(self) -> dict[str, object]:
         return {
             "schema_version": self.schema_version,
+            "budget_scope": self.budget_scope,
             "model": self.model.to_dict(),
+            "influence_register": _group_influences(self.influences),
+            # Alias de compatibilité avec les résultats 0.9.6.
             "ishikawa": _group_influences(self.influences),
             "influences": [asdict(item) for item in self.influences],
             "components": [item.to_dict() for item in self.components],
@@ -381,7 +407,7 @@ def evaluate_type_b(value: object) -> EvaluatedComponent:
             "degrees_of_freedom",
             "sensitivity_justification",
         },
-        optional={"coverage_factor", "notes"},
+        optional={"coverage_factor", "estimate", "notes"},
         label="Type B component",
     )
     source_value = require_non_negative("Type B value", data["value"])
@@ -436,10 +462,13 @@ def evaluate_type_b(value: object) -> EvaluatedComponent:
     sensitivity_unit = require_text("Type B sensitivity_unit", data["sensitivity_unit"])
     parse_unit(unit)
     parse_unit(sensitivity_unit)
+    input_estimate = data.get("estimate")
+    if input_estimate is not None:
+        input_estimate = require_finite("Type B estimate", input_estimate)
     return EvaluatedComponent(
         name=require_text("Type B name", data["name"]),
         evaluation_type="B",
-        input_estimate=None,
+        input_estimate=input_estimate,
         source_value=source_value,
         value_kind=value_kind,
         distribution=distribution,
@@ -461,7 +490,7 @@ def evaluate_type_b(value: object) -> EvaluatedComponent:
 
 
 def _group_influences(influences: tuple[InfluenceEntry, ...]) -> dict[str, list[dict[str, object]]]:
-    grouped = {category: [] for category in sorted(ISHIKAWA_CATEGORIES)}
+    grouped = {category: [] for category in sorted(INFLUENCE_CATEGORIES)}
     for influence in influences:
         grouped[influence.category].append(asdict(influence))
     return grouped
@@ -539,6 +568,7 @@ def _signed_sum(values: list[float]) -> str:
 
 
 def render_uncertainty_note(
+    budget_scope: str,
     model: MeasurementModelSpec,
     influences: tuple[InfluenceEntry, ...],
     components: tuple[EvaluatedComponent, ...],
@@ -564,10 +594,11 @@ def render_uncertainty_note(
         "",
         f"- **Décision attendue :** {_md(model.decision)}",
         f"- **Mesurande :** {_md(model.measurand)}",
+        f"- **Périmètre du budget :** `{_md(budget_scope)}`",
         f"- **Unité de sortie :** `{_md(model.output_unit)}`",
         f"- **Conditions :** {_md(model.conditions)}",
         "",
-        "## 2. Inventaire Ishikawa",
+        "## 2. Registre structuré des sources d’incertitude",
         "",
         "| Catégorie | Influence | Traitement | Composante | Justification | Source |",
         "|---|---|---|---|---|---|",
@@ -613,18 +644,23 @@ def render_uncertainty_note(
     lines.extend(
         [
             "",
-            "## 4. Évaluation des composantes",
+            "## 4. Évaluation des composantes et contributions",
             "",
             "Type A et Type B indiquent la méthode d’évaluation, pas le caractère aléatoire ou systématique de l’effet.",
             "",
-            "| Composante | Type | Source | Distribution | Diviseur | Incertitude-type | Sensibilité | Contribution | Degrés de liberté |",
-            "|---|---|---|---|---:|---:|---:|---:|---:|",
+            "Une ligne individuelle décrit une composante et sa contribution. Seul le résultat après composition de toutes les contributions et covariances est une incertitude-type composée.",
+            "",
+            "| Composante | Estimation de l’entrée | Type | Source | Distribution | Diviseur | Incertitude-type de l’entrée | Sensibilité | Contribution au mesurande | Degrés de liberté |",
+            "|---|---:|---|---|---|---:|---:|---:|---:|---:|",
         ]
     )
     for item in components:
         degrees = "∞" if item.degrees_of_freedom is None else _number(item.degrees_of_freedom)
+        estimate = "—" if item.input_estimate is None else (
+            f"{_number(item.input_estimate)} `{_md(item.unit)}`"
+        )
         lines.append(
-            f"| {_md(item.name)} | {item.evaluation_type} | {_md(item.source)} | "
+            f"| {_md(item.name)} | {estimate} | {item.evaluation_type} | {_md(item.source)} | "
             f"{_md(item.distribution)} | {_number(item.divisor)} | "
             f"{_number(item.standard_uncertainty)} `{_md(item.unit)}` | "
             f"{_number(item.sensitivity)} `{_md(item.sensitivity_unit)}` | "
@@ -694,11 +730,13 @@ def render_uncertainty_note(
                 "",
                 f"Justification du coefficient de sensibilité : {_md(item.sensitivity_justification)}",
                 "",
-                "La contribution au mesurande vaut :",
+                "La contribution signée au mesurande vaut :",
                 "",
                 "$$",
-                f"c_i u(x_i) = {_number(item.sensitivity)} \\times "
-                f"{_number(item.standard_uncertainty)} = "
+                f"c_i u(x_i) = {_number(item.sensitivity)}"
+                f"\\;\\mathrm{{{_md(item.sensitivity_unit)}}} \\times "
+                f"{_number(item.standard_uncertainty)}"
+                f"\\;\\mathrm{{{_md(item.unit)}}} = "
                 f"{_number(item.output_contribution)}\\;\\mathrm{{{_md(item.output_unit)}}}",
                 "$$",
             ]
@@ -808,16 +846,21 @@ def build_uncertainty_study(payload: object) -> UncertaintyStudyResult:
             "correlation_justification",
             "propagation_justification",
         },
+        optional={"budget_scope"},
         label="uncertainty study",
+    )
+    budget_scope_value = data.get("budget_scope")
+    budget_scope = (
+        "unspecified" if budget_scope_value is None else _budget_scope(budget_scope_value)
     )
     model = MeasurementModelSpec.from_dict(data["model"])
     influences_value = data["influences"]
     if not isinstance(influences_value, list) or not influences_value:
-        raise ValueError("Ishikawa influences must be a non-empty array")
+        raise ValueError("uncertainty influence register must be a non-empty array")
     influences = tuple(InfluenceEntry.from_dict(item) for item in influences_value)
     influence_ids = [item.id for item in influences]
     if len(influence_ids) != len(set(influence_ids)):
-        raise ValueError("Ishikawa influence ids must be unique")
+        raise ValueError("uncertainty influence ids must be unique")
 
     type_a_value = data["type_a"]
     type_b_value = data["type_b"]
@@ -833,6 +876,19 @@ def build_uncertainty_study(payload: object) -> UncertaintyStudyResult:
     if len(component_names) != len(set(component_names)):
         raise ValueError("uncertainty component names must be unique")
 
+    if budget_scope != "unspecified":
+        allowed_owners = BUDGET_SCOPE_OWNERS[budget_scope]
+        forbidden = sorted(
+            {item.owner for item in components if item.owner not in allowed_owners}
+        )
+        if forbidden:
+            raise ValueError(
+                f"budget_scope '{budget_scope}' cannot include component owners: "
+                + ", ".join(forbidden)
+                + ". Evaluate reference/transfer uncertainty in its own budget or mark "
+                "the source as covered by the calibrated parameter that carries it."
+            )
+
     referenced = {
         item.component_name
         for item in influences
@@ -840,14 +896,14 @@ def build_uncertainty_study(payload: object) -> UncertaintyStudyResult:
     }
     unknown = sorted(name for name in referenced if name not in set(component_names))
     if unknown:
-        raise ValueError("Ishikawa references unknown components: " + ", ".join(unknown))
+        raise ValueError("influence register references unknown components: " + ", ".join(unknown))
     direct_components = {
         item.component_name for item in influences if item.treatment == "component"
     }
     missing = sorted(set(component_names) - direct_components)
     if missing:
         raise ValueError(
-            "uncertainty components without a direct Ishikawa component entry: "
+            "uncertainty components without a direct influence-register entry: "
             + ", ".join(missing)
         )
 
@@ -875,6 +931,7 @@ def build_uncertainty_study(payload: object) -> UncertaintyStudyResult:
     )
     verification = _verify_matrix_form(components, correlations, budget)
     note = render_uncertainty_note(
+        budget_scope,
         model,
         influences,
         components,
@@ -886,12 +943,18 @@ def build_uncertainty_study(payload: object) -> UncertaintyStudyResult:
         propagation_justification,
     )
     warnings = list(budget.warnings)
+    if budget_scope == "unspecified":
+        warnings.append(
+            "Budget scope is not declared; ownership separation and double counting "
+            "cannot be audited deterministically."
+        )
     if not type_a_value:
         warnings.append("No Type A component is present; confirm that no repeatability data apply.")
     if not type_b_value:
         warnings.append("No Type B component is present; confirm documentary influences are complete.")
     return UncertaintyStudyResult(
         schema_version=SCHEMA_VERSION,
+        budget_scope=budget_scope,
         model=model,
         influences=influences,
         components=components,

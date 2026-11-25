@@ -86,7 +86,7 @@ Les agents ne s'appellent pas directement. L'orchestrateur est l'unique médiate
 | KnowledgeStore | intégrité, provenance, recherche et cycle candidat/validé/remplacé | transformer automatiquement une inférence en fait |
 | VectorKnowledgeIndex | vecteurs persistants des connaissances validées | indexer un candidat ou masquer un changement de modèle |
 | HybridRagRetriever | fusionner similarité cosinus et pertinence lexicale | valider la vérité d'un fragment retrouvé |
-| UNCERTAINTY-ANALYST | relier Ishikawa, modèle, Type A/B, corrélations et note LaTeX | lancer lui-même un calcul ou valider sa propre méthode |
+| UNCERTAINTY-ANALYST | relier registre des sources, modèle, Type A/B, corrélations et note LaTeX | lancer lui-même un calcul ou valider sa propre méthode |
 | MODEL-COMPILER | proposer un payload avec preuve par champ critique | inventer une valeur manquante ou choisir silencieusement une hypothèse |
 | ConclusionVerifier | comparer claims structurés, valeurs et unités au moteur | certifier la cohérence sémantique complète d'une conclusion |
 | CompletionGate | convertir audit, claims, refus, traces et rôles omis en verdict final | présenter `unverified` comme un succès |
@@ -106,7 +106,7 @@ Les agents ne s'appellent pas directement. L'orchestrateur est l'unique médiate
 3. Lorsqu'un PDF est fourni, son chemin reste dans la racine gouvernée, son empreinte est vérifiée, puis `PDF-EXTRACTOR` l'analyse par lots de vingt pages avant synthèse.
 4. Pour une recherche Internet, `WEB-RESEARCHER` émet des `research_requests`. L'orchestrateur contrôle leur nombre, déduplique les requêtes, appelle le fournisseur injecté, filtre domaines et types de source, puis exécute une passe d'affinage avant la synthèse.
 5. Les sources Web, lots PDF et synthèses sont mémorisés comme candidats. Après promotion, l'index vectoriel persistant est rafraîchi et le RAG hybride injecte au plus cinq résultats validés.
-6. Pour un bilan complet, `UNCERTAINTY-ANALYST` relie le registre Ishikawa, l'équation de mesure, les évaluations Type A/B et les corrélations. `MODEL-COMPILER` produit ensuite une requête et une preuve par nombre, booléen et unité critique. La présence de l'extrait dans une source admise et la valeur sont vérifiées avant calcul.
+6. Pour un bilan complet, `UNCERTAINTY-ANALYST` relie le registre structuré des sources d'incertitude, l'équation de mesure, les évaluations Type A/B et les corrélations. `MODEL-COMPILER` produit ensuite une requête et une preuve par nombre, booléen et unité critique. La présence de l'extrait dans une source admise et la valeur sont vérifiées avant calcul.
 7. Seul `MODEL-COMPILER` peut rendre une enveloppe agent avec des `calculation_requests`. Toute tentative d'un autre rôle est enregistrée comme `CalculationRoleViolation` et bloque la complétude.
 8. Le moteur rejette les valeurs non finies, unités de composantes incompatibles, corrélations sans justification, matrices invalides, covariances physiquement impossibles, variances négatives et séparations non justifiées.
 9. Chaque résultat ou refus est enregistré avec une trace canonique contenant demande, preuves, module, version, empreinte d'implémentation, environnement et résultat, puis transmis aux agents suivants.
@@ -176,7 +176,7 @@ Une `CalculationRequest` compilée porte des `InputEvidence`. Toute feuille num�
 
 ### Budget
 
-Une composante porte au minimum `name`, `standard_uncertainty`, `sensitivity` et `owner`. La matrice de corrélation utilise des paires de noms et doit être symétrique, bornée dans `[-1, 1]` et positive semi-définie.
+Une composante porte au minimum `name`, `standard_uncertainty`, `sensitivity` et `owner`. L'unité de l'entrée et celle de la sensibilité restent séparées jusqu'à la propagation ; une contribution déjà propagée dans l'unité du mesurande ne doit pas masquer la grandeur d'entrée physique. La matrice de corrélation utilise des paires de noms et doit être symétrique, bornée dans `[-1, 1]` et positive semi-définie.
 
 ### Provenance documentaire
 

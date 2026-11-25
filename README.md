@@ -19,7 +19,9 @@ Le projet ne contient le texte intégral d'aucune norme ISO ni d'aucun article p
 - un prompt maître Markdown directement modifiable et trois profils de budget de tokens ;
 - un catalogue documentaire structuré JCGM/BIPM, ISO, ILAC, EA et EURAMET ;
 - propagation linéaire avec unités de sensibilité typées, conversions dimensionnelles, matrice de corrélation, contributions de covariance, incertitude élargie et Welch–Satterthwaite lorsque les composantes à degrés de liberté finis restent indépendantes ;
-- parcours complet `uncertainty-study` en quatre étapes : Ishikawa, équation de mesure, évaluations Type A/B, composition et note Markdown/LaTeX traçable ;
+- parcours complet `uncertainty-study` en quatre étapes : registre structuré des sources, équation de mesure, évaluations Type A/B, composition et note Markdown/LaTeX traçable ;
+- contrôle déterministe du périmètre des budgets (`bench`, `reference`, `transfer`, `comparison`, `overall`) pour prévenir le double comptage ;
+- référence spécialisée pour les plaques, tuyères et caissons multi-tuyères : convention du facteur $\sqrt{2}$, facteur de détente, masse volumique CIPM-2007 et applicabilité des méthodes métier ;
 - calcul d'écart corrélé, score zêta, erreur normalisée, statistiques de paires et séparation conditionnelle de la variance du banc ;
 - un orchestrateur Python indépendant du fournisseur de modèle ;
 - un contrat `ResearchProvider` pour mener jusqu'à trois passes Web, filtrer les domaines et privilégier les sources officielles/primaires ;

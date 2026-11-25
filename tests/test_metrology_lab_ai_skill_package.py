@@ -15,10 +15,10 @@ SKILL = ROOT / "skills" / "metrology-lab-ai"
 
 
 class MetrologyLabAiSkillPackageTests(unittest.TestCase):
-    def test_plugin_manifest_targets_v096_skill(self) -> None:
+    def test_plugin_manifest_targets_v098_skill(self) -> None:
         manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["name"], "metrology-lab-ai")
-        self.assertEqual(manifest["version"], "0.9.6")
+        self.assertEqual(manifest["version"], "0.9.8")
         self.assertEqual(manifest["license"], "Apache-2.0")
         self.assertEqual(manifest["skills"], "./skills/")
 
@@ -26,7 +26,7 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
         project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
         manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
         skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-        expected = "0.9.6"
+        expected = "0.9.8"
         self.assertEqual(project["project"]["version"], expected)
         self.assertEqual(manifest["version"], expected)
         self.assertEqual(__version__, expected)
@@ -35,10 +35,11 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
     def test_skill_is_portable_and_routes_to_progressive_references(self) -> None:
         skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("name: metrology-lab-ai", skill_text)
-        self.assertIn('version: "0.9.6"', skill_text)
+        self.assertIn('version: "0.9.8"', skill_text)
         self.assertIn("references/statistiques-nist-fr.md", skill_text)
         self.assertIn("references/rapport-metrologique-fr.md", skill_text)
         self.assertIn("references/bilan-incertitude-fr.md", skill_text)
+        self.assertIn("references/debit-air-fr.md", skill_text)
         self.assertIn("references/runtime.md", skill_text)
 
         all_skill_text = "\n".join(
@@ -62,7 +63,7 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
         for topic in ("Gauge R&R", "Stabilité avant capabilité", "régression", "CUSUM", "fiabilité"):
             self.assertIn(topic, reference)
 
-    def test_portable_bridge_reaches_the_v096_engine(self) -> None:
+    def test_portable_bridge_reaches_the_v098_engine(self) -> None:
         process = subprocess.run(
             [
                 sys.executable,
@@ -95,7 +96,7 @@ class MetrologyLabAiSkillPackageTests(unittest.TestCase):
     def test_public_python_alias_exports_the_engine(self) -> None:
         import metrology_lab_ai
 
-        self.assertEqual(metrology_lab_ai.__version__, "0.9.6")
+        self.assertEqual(metrology_lab_ai.__version__, "0.9.8")
         self.assertTrue(hasattr(metrology_lab_ai, "DeterministicEngine"))
         self.assertTrue(hasattr(metrology_lab_ai, "build_uncertainty_study"))
         self.assertTrue(hasattr(metrology_lab_ai, "verify_with_external_oracles"))

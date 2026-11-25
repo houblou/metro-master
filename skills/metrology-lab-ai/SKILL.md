@@ -3,7 +3,7 @@ name: metrology-lab-ai
 description: Piloter en français une étude métrologique avec cadrage du mesurande, budgets d'incertitude, comparaisons, étalonnages, statistiques d'ingénierie, reprise de dossier et rapport auditable. Utiliser pour analyser ou poursuivre un travail de métrologie avec MetrologyLab AI et son moteur Python compatible metro-master. Ne remplace pas un certificat signé ni une décision d'accréditation.
 license: Apache-2.0
 metadata:
-  version: "0.9.6"
+  version: "0.9.8"
   language: "fr"
 ---
 
@@ -16,6 +16,7 @@ Lire [l'intégration portable](references/runtime.md) avant le premier appel du 
 - pour EDA, caractérisation du processus de mesure, R&R, régression, DOE, SPC, capabilité, comparaisons statistiques ou fiabilité, lire [les méthodes statistiques NIST en français](references/statistiques-nist-fr.md) ;
 - pour créer, reprendre ou auditer un rapport métrologique existant, lire [le workflow de rapport en français](references/rapport-metrologique-fr.md) ;
 - pour construire un bilan complet d'incertitude, lire [le parcours GUM en quatre étapes](references/bilan-incertitude-fr.md) ;
+- pour une mesure de débit d'air par plaque, tuyère, Venturi ou caisson multi-tuyères, lire [le modèle aéraulique et les portes d'applicabilité](references/debit-air-fr.md) ;
 - ne pas charger ces références si la question est simple et autonome.
 
 ## Contrat essentiel
@@ -42,7 +43,7 @@ Choisir uniquement les rôles utiles parmi :
 - `METRO-COMPARE` pour banc, référence, transfert et covariances ;
 - `CALIB-EXPERT` pour corrections, traçabilité, dérive et périodicité ;
 - `DATA-METRO` pour EDA, modèles statistiques, plans d'expérience et diagnostics ;
-- `UNCERTAINTY-ANALYST` pour Ishikawa, équation de mesure, Type A/B et composition ;
+- `UNCERTAINTY-ANALYST` pour le registre des sources d'incertitude, l'équation de mesure, les évaluations Type A/B et la composition ;
 - `MODEL-COMPILER` pour transformer un texte libre en entrées prouvées ;
 - `GUM-EXPERT` pour le budget, les distributions et les corrélations ;
 - `NORM-EXPERT` pour le statut normatif ou l'accréditation ;
@@ -57,11 +58,15 @@ Ne jamais charger les quatorze prompts ensemble. Utiliser `eco`, `standard` ou `
 
 Construire les entrées JSON uniquement avec des valeurs fournies ou prouvées. Utiliser le moteur pour `uncertainty-study`, `budget`, `compare`, `paired`, `separate` et les modules gouvernés actifs. Rendre visibles unités, distributions, sensibilités, corrélations, justification, provenance et refus. Pour chaque budget compilé, renseigner l'unité de la grandeur d'entrée (`unit`), celle du coefficient (`sensitivity_unit`) et l'unité du mesurande (`output_unit`) ; vérifier `unit × sensitivity_unit = output_unit` dimensionnellement.
 
+Ne jamais confondre la grandeur d'entrée $X_i$, son incertitude-type $u(x_i)$, le coefficient de sensibilité $c_i$, la contribution $c_i u(x_i)$ et l'incertitude-type composée $u_c(y)$. Conserver l'unité physique de l'entrée jusqu'à la propagation. Une contribution déjà propagée dans l'unité du mesurande n'est admissible que comme donnée de benchmark explicitement nommée comme telle ; elle ne doit pas être présentée comme la grandeur d'entrée d'origine avec une sensibilité artificielle égale à 1.
+
 Pour `d = x_banc - x_reference`, appliquer :
 
 `u²(d) = u²(banc) + u²(reference) - 2 cov(banc, reference)`.
 
 Une corrélation nulle est une hypothèse à justifier. Un calcul `ok` prouve l'arithmétique de ses entrées, pas la validité scientifique du modèle.
+
+Pour `uncertainty-study`, déclarer `budget_scope`. Un budget `bench` ne peut contenir directement une composante `reference`, `transfer` ou `comparison`. Lorsqu'une référence de transfert a servi à étalonner un coefficient ou une correction, enregistrer cette influence comme `covered` par le paramètre calibré au lieu de la compter une seconde fois.
 
 ## Statistiques d'ingénierie
 

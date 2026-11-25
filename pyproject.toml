@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metrology-lab-ai"
-version = "0.9.6"
+version = "0.9.8"
 description = "MetrologyLab AI — orchestration métrologique et moteur de calcul vérifiable"
 readme = "README.md"
 requires-python = ">=3.11"

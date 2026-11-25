@@ -38,7 +38,7 @@ Un adaptateur peut continuer à rendre une chaîne de texte ordinaire. Pour dema
 }
 ```
 
-Les opérations natives sont `budget`, `uncertainty-study`, `compare`, `paired` et `separate`. `uncertainty-study` impose le parcours Ishikawa, modèle, Type A/B et composition, puis produit une note Markdown/LaTeX et une vérification matricielle indépendante dans la même trace. Les modules déclaratifs actifs apparaissent aussi dans `available_calculation_modules` et deviennent des opérations autorisées. Le `payload` suit exactement le contrat du module. Les identifiants doivent être uniques dans le tour et un maximum de seize calculs est accepté par réponse.
+Les opérations natives sont `budget`, `uncertainty-study`, `compare`, `paired` et `separate`. `uncertainty-study` impose le parcours registre des sources, modèle, Type A/B et composition, puis produit une note Markdown/LaTeX et une vérification matricielle indépendante dans la même trace. Les modules déclaratifs actifs apparaissent aussi dans `available_calculation_modules` et deviennent des opérations autorisées. Le `payload` suit exactement le contrat du module. Les identifiants doivent être uniques dans le tour et un maximum de seize calculs est accepté par réponse.
 
 Lorsqu'une requête provient de `MODEL-COMPILER`, chaque nombre, booléen et unité critique du payload doit être couvert par `evidence` :
 

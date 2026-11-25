@@ -64,7 +64,7 @@ AGENTS = {
     ),
     "UNCERTAINTY-ANALYST": AgentSpec(
         "UNCERTAINTY-ANALYST",
-        "Parcours Ishikawa, modèle, Type A/B et composition traçable",
+        "Registre des sources, modèle, Type A/B et composition traçable",
         "uncertainty-analyst.md",
     ),
     "MODEL-COMPILER": AgentSpec(

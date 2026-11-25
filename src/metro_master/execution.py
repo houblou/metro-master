@@ -706,7 +706,7 @@ def _require_explicit_compiled_fields(request: CalculationRequest) -> None:
         influences = payload.get("influences")
         if not isinstance(influences, list) or not influences:
             raise ProvenanceValidationError(
-                "compiled uncertainty study requires an explicit Ishikawa register"
+                "compiled uncertainty study requires an explicit influence register"
             )
         type_a = payload.get("type_a")
         type_b = payload.get("type_b")
